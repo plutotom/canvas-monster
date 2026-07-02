@@ -7,6 +7,7 @@ import { refreshCanvas } from "@/app/actions";
 const LINKS = [
   { href: "/", label: "Dashboard" },
   { href: "/calendar", label: "Calendar" },
+  { href: "/kanban", label: "Kanban" },
   { href: "/courses", label: "Courses" },
   { href: "/settings", label: "Settings" },
 ];
