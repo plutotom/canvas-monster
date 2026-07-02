@@ -1,6 +1,7 @@
 import "server-only";
 
 import type {
+  CanvasAnnouncement,
   CanvasAssignment,
   CanvasCourse,
   CanvasEnrollment,
@@ -146,4 +147,36 @@ export function getSelfEnrollments(
 
 export function getTodo(): Promise<CanvasTodoItem[]> {
   return canvasGetAll<CanvasTodoItem>("/users/self/todo?per_page=100");
+}
+
+export function getCourse(courseId: number): Promise<CanvasCourse> {
+  return canvasGet<CanvasCourse>(`/courses/${courseId}`);
+}
+
+export function getCourseAnnouncements(
+  courseId: number,
+): Promise<CanvasAnnouncement[]> {
+  return canvasGetAll<CanvasAnnouncement>(
+    `/courses/${courseId}/discussion_topics?only_announcements=true&per_page=20`,
+  );
+}
+
+/** Verify the token/base URL by making one cheap authenticated call. */
+export async function testConnection(): Promise<{
+  ok: boolean;
+  user?: { id: number; name: string };
+  error?: string;
+  status?: number;
+}> {
+  try {
+    const user = await canvasGet<{ id: number; name: string }>(
+      "/users/self",
+    );
+    return { ok: true, user };
+  } catch (err) {
+    if (err instanceof CanvasError) {
+      return { ok: false, error: err.message, status: err.status };
+    }
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
 }

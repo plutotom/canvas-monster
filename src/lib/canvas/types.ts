@@ -57,6 +57,15 @@ export interface CanvasTodoItem {
   ignore: string;
 }
 
+export interface CanvasAnnouncement {
+  id: number;
+  title: string;
+  message: string | null; // HTML
+  posted_at: string | null;
+  html_url: string;
+  author?: { display_name?: string };
+}
+
 export interface CanvasEnrollment {
   id: number;
   course_id: number;

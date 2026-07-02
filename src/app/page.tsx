@@ -4,7 +4,7 @@ import {
   type DashboardData,
   type UpcomingItem,
 } from "@/lib/canvas/dashboard";
-import { CanvasError } from "@/lib/canvas/client";
+import { ErrorBox, toLoadError, type LoadError } from "@/components/error-box";
 import { BUCKET_ORDER, bucketFor, formatDue, type Bucket } from "@/lib/dates";
 
 export const dynamic = "force-dynamic";
@@ -41,20 +41,11 @@ function ItemRow({ item }: { item: UpcomingItem }) {
 
 export default async function Home() {
   let data: DashboardData | undefined;
-  let error: { message: string; status?: number; noToken?: boolean } | null =
-    null;
+  let error: LoadError | null = null;
   try {
     data = await getDashboard();
   } catch (err) {
-    if (err instanceof CanvasError) {
-      error = {
-        message: err.message,
-        status: err.status,
-        noToken: !process.env.CANVAS_TOKEN,
-      };
-    } else {
-      error = { message: err instanceof Error ? err.message : String(err) };
-    }
+    error = toLoadError(err, !!process.env.CANVAS_TOKEN);
   }
 
   return (
@@ -74,21 +65,7 @@ export default async function Home() {
       </header>
 
       {error ? (
-        <div className="rounded-lg border border-red-900/60 bg-red-950/40 p-4 text-sm text-red-200">
-          <p className="font-medium">
-            Couldn&apos;t load Canvas data
-            {error.status ? ` (${error.status})` : ""}
-          </p>
-          <p className="mt-1 font-mono text-xs text-red-300/80">
-            {error.message}
-          </p>
-          {error.noToken && (
-            <p className="mt-2 text-red-200/80">
-              Set <code>CANVAS_TOKEN</code> in <code>.env.local</code> and
-              restart.
-            </p>
-          )}
-        </div>
+        <ErrorBox error={error} />
       ) : data && data.items.length === 0 ? (
         <p className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-6 text-center text-zinc-400">
           🎉 Nothing due. You&apos;re all caught up.
