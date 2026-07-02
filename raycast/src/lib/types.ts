@@ -12,6 +12,14 @@ export interface CanvasSubmission {
   missing: boolean;
 }
 
+export interface CanvasAnnouncement {
+  id: number;
+  title: string;
+  message: string | null; // HTML
+  posted_at: string | null;
+  html_url: string;
+}
+
 export interface CanvasAssignment {
   id: number;
   course_id: number;

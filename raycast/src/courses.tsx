@@ -10,6 +10,7 @@ import { useCachedPromise } from "@raycast/utils";
 import {
   courseWebUrl,
   getActiveCourses,
+  getCourseAnnouncements,
   getCourseAssignments,
   isSubmitted,
 } from "./lib/canvas";
@@ -69,14 +70,14 @@ export default function Command() {
           subtitle={course.course_code}
           actions={
             <ActionPanel>
+              <Action.Push
+                title="View Course"
+                icon={Icon.Sidebar}
+                target={<CourseDetail course={course} />}
+              />
               <Action.OpenInBrowser
                 url={courseWebUrl(course.id)}
                 title="Open Course in Canvas"
-              />
-              <Action.Push
-                title="Show Assignments"
-                icon={Icon.List}
-                target={<Assignments course={course} />}
               />
               <Action
                 title="Open Extension Preferences"
@@ -91,46 +92,73 @@ export default function Command() {
   );
 }
 
-function Assignments({ course }: { course: CanvasCourse }) {
-  const { data, isLoading } = useCachedPromise(
-    getCourseAssignments,
-    [course.id],
-    { keepPreviousData: true },
-  );
+function CourseDetail({ course }: { course: CanvasCourse }) {
+  const announcements = useCachedPromise(getCourseAnnouncements, [course.id], {
+    keepPreviousData: true,
+  });
+  const assignments = useCachedPromise(getCourseAssignments, [course.id], {
+    keepPreviousData: true,
+  });
 
-  const assignments = (data ?? [])
+  const anns = announcements.data ?? [];
+  const asgs = (assignments.data ?? [])
     .slice()
     .sort((a, b) => (b.due_at ?? "").localeCompare(a.due_at ?? ""));
 
   return (
     <List
-      isLoading={isLoading}
+      isLoading={announcements.isLoading || assignments.isLoading}
       navigationTitle={course.course_code}
-      searchBarPlaceholder="Search assignments…"
+      searchBarPlaceholder="Search this course…"
     >
-      <List.EmptyView
-        icon={Icon.Document}
-        title={isLoading ? "Loading…" : "No assignments"}
-      />
-      {assignments.map((a) => (
-        <List.Item
-          key={a.id}
-          icon={{
-            source: isSubmitted(a) ? Icon.CheckCircle : Icon.Circle,
-            tintColor: isSubmitted(a) ? Color.Green : Color.SecondaryText,
-          }}
-          title={a.name}
-          accessories={[
-            { text: a.due_at ? formatDue(a.due_at) : "No due date" },
-          ]}
-          actions={
-            <ActionPanel>
-              <Action.OpenInBrowser url={a.html_url} title="Open in Canvas" />
-              <Action.CopyToClipboard content={a.html_url} title="Copy Link" />
-            </ActionPanel>
-          }
-        />
-      ))}
+      <List.EmptyView icon={Icon.Book} title="Nothing here yet" />
+
+      <List.Section title="Announcements" subtitle={`${anns.length}`}>
+        {anns.map((a) => (
+          <List.Item
+            key={`ann-${a.id}`}
+            icon={{ source: Icon.Bell, tintColor: Color.Yellow }}
+            title={a.title}
+            accessories={
+              a.posted_at ? [{ text: formatDue(a.posted_at) }] : undefined
+            }
+            actions={
+              <ActionPanel>
+                <Action.OpenInBrowser url={a.html_url} title="Open in Canvas" />
+                <Action.CopyToClipboard
+                  content={a.html_url}
+                  title="Copy Link"
+                />
+              </ActionPanel>
+            }
+          />
+        ))}
+      </List.Section>
+
+      <List.Section title="Assignments" subtitle={`${asgs.length}`}>
+        {asgs.map((a) => (
+          <List.Item
+            key={`asg-${a.id}`}
+            icon={{
+              source: isSubmitted(a) ? Icon.CheckCircle : Icon.Circle,
+              tintColor: isSubmitted(a) ? Color.Green : Color.SecondaryText,
+            }}
+            title={a.name}
+            accessories={[
+              { text: a.due_at ? formatDue(a.due_at) : "No due date" },
+            ]}
+            actions={
+              <ActionPanel>
+                <Action.OpenInBrowser url={a.html_url} title="Open in Canvas" />
+                <Action.CopyToClipboard
+                  content={a.html_url}
+                  title="Copy Link"
+                />
+              </ActionPanel>
+            }
+          />
+        ))}
+      </List.Section>
     </List>
   );
 }

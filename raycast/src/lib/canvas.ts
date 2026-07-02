@@ -1,5 +1,10 @@
 import { getPreferenceValues } from "@raycast/api";
-import type { CanvasAssignment, CanvasCourse, CanvasSubmission } from "./types";
+import type {
+  CanvasAnnouncement,
+  CanvasAssignment,
+  CanvasCourse,
+  CanvasSubmission,
+} from "./types";
 
 interface Prefs {
   canvasToken: string;
@@ -115,6 +120,14 @@ export function getCourseAssignments(
 ): Promise<CanvasAssignment[]> {
   return canvasGetAll<CanvasAssignment>(
     `/courses/${courseId}/assignments?include[]=submission&per_page=100`,
+  );
+}
+
+export function getCourseAnnouncements(
+  courseId: number,
+): Promise<CanvasAnnouncement[]> {
+  return canvasGetAll<CanvasAnnouncement>(
+    `/courses/${courseId}/discussion_topics?only_announcements=true&per_page=20`,
   );
 }
 
