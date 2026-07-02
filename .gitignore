@@ -42,4 +42,4 @@ next-env.d.ts
 
 # local artifacts
 .playwright-mcp/
-*.png
+/*.png
