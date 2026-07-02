@@ -1,8 +1,20 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Box, MoreHorizontal, Plus } from "lucide-react";
 import { LANES, type KanbanCard, type Lane } from "@/lib/kanban";
 import { moveItem } from "./actions";
+import { StatusIcon, type Status } from "@/components/ui/status-icon";
+import { Pill } from "@/components/ui/pill";
+import { useToast } from "@/components/toast";
+
+// Lane → the status circle shown in its column header.
+const LANE_STATUS: Record<Lane, Status> = {
+  read: "todo",
+  watch: "todo",
+  do: "progress",
+  done: "done",
+};
 
 export function Board({
   cards: initial,
@@ -16,27 +28,27 @@ export function Board({
   const [overLane, setOverLane] = useState<Lane | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+  const toast = useToast();
 
   function move(itemKey: string, lane: Lane) {
     const card = cards.find((c) => c.itemKey === itemKey);
     if (!card || card.lane === lane) return;
+    const label = LANES.find((l) => l.id === lane)?.label ?? lane;
 
     const prev = cards;
-    // optimistic
-    setCards((cs) =>
-      cs.map((c) =>
-        c.itemKey === itemKey ? { ...c, lane, manual: true } : c,
-      ),
-    );
+    setCards((cs) => cs.map((c) => (c.itemKey === itemKey ? { ...c, lane, manual: true } : c)));
     setError(null);
 
-    if (!persists) return; // no DB — local-only, don't call the action
+    if (!persists) return; // no DB — local-only
     startTransition(async () => {
       try {
         await moveItem(itemKey, lane);
+        toast(`Moved to ${label}`, "success");
       } catch (e) {
-        setCards(prev); // roll back
-        setError(e instanceof Error ? e.message : "Failed to move item.");
+        setCards(prev);
+        const msg = e instanceof Error ? e.message : "Failed to move item.";
+        setError(msg);
+        toast(msg, "error");
       }
     });
   }
@@ -44,15 +56,22 @@ export function Board({
   return (
     <>
       {error && (
-        <p className="mb-4 rounded border border-red-900/60 bg-red-950/40 px-3 py-2 text-xs text-red-200">
+        <p
+          className="mx-3 mt-2 rounded-md border px-3 py-2 text-xs"
+          style={{
+            borderColor: "color-mix(in oklch, var(--cm-red), transparent 60%)",
+            background: "color-mix(in oklch, var(--cm-red), transparent 88%)",
+            color: "color-mix(in oklch, var(--cm-red), white 55%)",
+          }}
+        >
           {error}
         </p>
       )}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="flex h-full gap-2 overflow-x-auto px-3 py-2">
         {LANES.map((lane) => {
           const laneCards = cards.filter((c) => c.lane === lane.id);
           return (
-            <section
+            <div
               key={lane.id}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -65,34 +84,39 @@ export function Board({
                 if (dragKey) move(dragKey, lane.id);
                 setDragKey(null);
               }}
-              className={`flex flex-col rounded-xl border p-3 transition-colors ${
-                overLane === lane.id
-                  ? "border-emerald-700 bg-emerald-950/20"
-                  : "border-zinc-800 bg-zinc-900/40"
-              }`}
+              className="group flex w-[300px] shrink-0 flex-col rounded-xl transition-colors"
+              style={{
+                background: overLane === lane.id ? "var(--cm-accent-soft)" : "var(--cm-column)",
+              }}
             >
-              <div className="mb-3 flex items-baseline justify-between">
-                <h2 className="text-sm font-semibold text-zinc-200">
-                  {lane.label}
-                </h2>
-                <span className="text-xs text-zinc-500">{laneCards.length}</span>
+              <div className="flex items-center gap-2 px-3 py-2.5">
+                <StatusIcon
+                  status={LANE_STATUS[lane.id]}
+                  color={LANE_STATUS[lane.id] === "todo" ? "var(--cm-faint)" : undefined}
+                />
+                <span className="text-[13px] font-medium">{lane.label}</span>
+                <span className="text-faint">{laneCards.length}</span>
+                <div className="ml-auto flex items-center gap-1 text-faint">
+                  <MoreHorizontal size={15} className="cursor-pointer" />
+                  <Plus size={15} className="cursor-pointer" />
+                </div>
               </div>
-              <div className="flex flex-col gap-2">
-                {laneCards.map((card) => (
+
+              <div className="flex flex-1 flex-col gap-2 overflow-y-auto px-2 pb-2">
+                {laneCards.map((card, i) => (
                   <Card
                     key={card.itemKey}
                     card={card}
+                    i={i}
                     onDragStart={() => setDragKey(card.itemKey)}
-                    onMove={(lane) => move(card.itemKey, lane)}
+                    onMove={(l) => move(card.itemKey, l)}
                   />
                 ))}
                 {laneCards.length === 0 && (
-                  <p className="py-6 text-center text-xs text-zinc-600">
-                    Empty
-                  </p>
+                  <p className="py-8 text-center text-[11px] text-faint">Empty</p>
                 )}
               </div>
-            </section>
+            </div>
           );
         })}
       </div>
@@ -102,10 +126,12 @@ export function Board({
 
 function Card({
   card,
+  i,
   onDragStart,
   onMove,
 }: {
   card: KanbanCard;
+  i: number;
   onDragStart: () => void;
   onMove: (lane: Lane) => void;
 }) {
@@ -113,28 +139,43 @@ function Card({
     <div
       draggable
       onDragStart={onDragStart}
-      className="cursor-grab rounded-lg border border-zinc-800 bg-zinc-950/60 p-3 active:cursor-grabbing"
+      className="cm-row flex min-w-0 cursor-grab flex-col gap-2 rounded-lg border border-line bg-card p-3 transition-colors hover:border-line-strong active:cursor-grabbing"
+      style={{ animationDelay: `${i * 40}ms` }}
     >
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-[11px] text-faint">{card.type}</span>
+        {card.submitted && (
+          <span className="text-[11px]" style={{ color: "var(--cm-green)" }}>
+            submitted
+          </span>
+        )}
+      </div>
+
       <a
         href={card.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="block text-sm font-medium text-zinc-100 hover:text-emerald-300"
+        onClick={(e) => e.stopPropagation()}
+        title={card.title}
+        className="line-clamp-2 text-[13px] leading-snug font-medium hover:text-brand"
       >
         {card.title}
       </a>
-      <div className="mt-1 flex items-center gap-2 text-xs text-zinc-500">
-        <span>{card.courseCode}</span>
-        <span>·</span>
-        <span>{card.type}</span>
-        {card.submitted && <span className="text-emerald-500">· submitted</span>}
+
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Pill>
+          <Box size={12} className="text-muted-foreground" />
+          {card.courseCode}
+        </Pill>
       </div>
+
       {/* touch-friendly lane picker (native DnD is unreliable on mobile) */}
       <select
         value={card.lane}
         onChange={(e) => onMove(e.target.value as Lane)}
+        onClick={(e) => e.stopPropagation()}
         aria-label="Move to lane"
-        className="mt-2 w-full rounded border border-zinc-800 bg-zinc-900 px-2 py-1 text-xs text-zinc-300"
+        className="mt-0.5 w-full rounded-md border border-line bg-panel px-2 py-1 text-[12px] text-muted-foreground"
       >
         {LANES.map((l) => (
           <option key={l.id} value={l.id}>

@@ -78,25 +78,25 @@ export default async function CalendarPage({
     now.getDate() === d;
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
-      <header className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-zinc-100">{monthLabel}</h1>
-        <div className="flex items-center gap-2 text-sm">
+    <div className="mx-auto max-w-5xl px-4 py-4">
+      <header className="mb-4 flex items-center justify-between">
+        <h1 className="text-[15px] font-semibold">{monthLabel}</h1>
+        <div className="flex items-center gap-1 text-[13px]">
           <Link
             href={`/calendar?month=${monthKey(prev.year, prev.month0)}`}
-            className="rounded border border-zinc-800 px-2 py-1 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+            className="rounded-md border border-line px-2 py-1 text-muted-foreground hover:border-line-strong hover:text-foreground"
           >
             ← Prev
           </Link>
           <Link
             href="/calendar"
-            className="rounded border border-zinc-800 px-2 py-1 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+            className="rounded-md border border-line px-2 py-1 text-muted-foreground hover:border-line-strong hover:text-foreground"
           >
             Today
           </Link>
           <Link
             href={`/calendar?month=${monthKey(next.year, next.month0)}`}
-            className="rounded border border-zinc-800 px-2 py-1 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+            className="rounded-md border border-line px-2 py-1 text-muted-foreground hover:border-line-strong hover:text-foreground"
           >
             Next →
           </Link>
@@ -106,32 +106,28 @@ export default async function CalendarPage({
       {error ? (
         <ErrorBox error={error} />
       ) : (
-        <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-zinc-800 bg-zinc-800">
+        <div className="grid grid-cols-7 gap-px overflow-hidden rounded-lg border border-line bg-line">
           {WEEKDAYS.map((w) => (
             <div
               key={w}
-              className="bg-zinc-950 py-2 text-center text-xs font-medium text-zinc-500"
+              className="bg-app py-2 text-center text-[11px] font-medium text-faint"
             >
               {w}
             </div>
           ))}
           {cells.map((d, i) => {
-            const items = d
-              ? byDay.get(`${year}-${month0}-${d}`) ?? []
-              : [];
+            const items = d ? byDay.get(`${year}-${month0}-${d}`) ?? [] : [];
             return (
-              <div
-                key={i}
-                className="min-h-24 bg-zinc-950 p-1.5 align-top"
-              >
+              <div key={i} className="min-h-24 bg-app p-1.5 align-top">
                 {d && (
                   <>
                     <div
-                      className={`mb-1 text-xs ${
+                      className={`mb-1 grid h-5 w-5 place-items-center rounded-full text-[11px] ${
                         isToday(d)
-                          ? "font-bold text-emerald-400"
-                          : "text-zinc-500"
+                          ? "font-semibold text-white"
+                          : "text-faint"
                       }`}
+                      style={isToday(d) ? { background: "var(--cm-accent)" } : undefined}
                     >
                       {d}
                     </div>
@@ -145,15 +141,20 @@ export default async function CalendarPage({
                           title={`${it.courseCode} — ${it.name}`}
                           className={`block truncate rounded px-1 py-0.5 text-[10px] leading-tight ${
                             it.submitted
-                              ? "bg-zinc-800 text-zinc-500 line-through"
-                              : "bg-sky-950 text-sky-200 hover:bg-sky-900"
+                              ? "bg-elevated text-faint line-through"
+                              : "text-foreground hover:bg-elevated"
                           }`}
+                          style={
+                            it.submitted
+                              ? undefined
+                              : { background: "var(--cm-accent-soft)" }
+                          }
                         >
                           {it.name}
                         </a>
                       ))}
                       {items.length > 3 && (
-                        <p className="px-1 text-[10px] text-zinc-500">
+                        <p className="px-1 text-[10px] text-faint">
                           +{items.length - 3} more
                         </p>
                       )}
@@ -165,6 +166,6 @@ export default async function CalendarPage({
           })}
         </div>
       )}
-    </main>
+    </div>
   );
 }

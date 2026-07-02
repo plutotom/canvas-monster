@@ -7,9 +7,29 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-geist-sans);
+
+  /* Linear design system — custom surface/line/semantic aliases.
+     See docs/DESIGN.md. Canonical reference: /proto */
+  --color-app: var(--cm-app);
+  --color-panel: var(--cm-panel);
+  --color-elevated: var(--cm-elevated);
+  --color-column: var(--cm-column);
+  --color-band: var(--cm-band);
+  --color-line: var(--cm-line);
+  --color-line-strong: var(--cm-line-strong);
+  --color-faint: var(--cm-faint);
+  --color-brand: var(--cm-accent);
+  --color-brand-hover: var(--cm-accent-hover);
+  --color-accent-soft: var(--cm-accent-soft);
+  --color-cm-red: var(--cm-red);
+  --color-cm-orange: var(--cm-orange);
+  --color-cm-amber: var(--cm-amber);
+  --color-cm-green: var(--cm-green);
+  --color-cm-blue: var(--cm-blue);
+  --color-cm-purple: var(--cm-purple);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,38 +72,63 @@
    regardless of the .dark class or the OS colour-scheme preference. */
 :root,
 .dark {
-  --radius: 0.625rem;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --radius: 0.5rem;
+
+  /* ---- Linear design system source values (see docs/DESIGN.md) ---- */
+  --cm-sidebar: #0f1113;
+  --cm-app: #131416;
+  --cm-panel: #0e0f11;
+  --cm-elevated: #1a1b1e;
+  --cm-column: #17181b;
+  --cm-card: #1c1d20;
+  --cm-band: rgba(255, 255, 255, 0.025);
+  --cm-line: rgba(255, 255, 255, 0.06);
+  --cm-line-strong: rgba(255, 255, 255, 0.1);
+  --cm-text: #eceef1;
+  --cm-muted: #8a8f98;
+  --cm-faint: #6b7079;
+  --cm-accent: #5e6ad2;
+  --cm-accent-hover: #6872e5;
+  --cm-accent-soft: rgba(94, 106, 210, 0.12);
+  --cm-red: #eb5757;
+  --cm-orange: #fc7840;
+  --cm-amber: #e2b53d;
+  --cm-green: #4cb782;
+  --cm-blue: #4aa3df;
+  --cm-purple: #a06bf5;
+
+  /* ---- shadcn tokens mapped onto the Linear system ---- */
+  --background: var(--cm-app);
+  --foreground: var(--cm-text);
+  --card: var(--cm-card);
+  --card-foreground: var(--cm-text);
+  --popover: var(--cm-elevated);
+  --popover-foreground: var(--cm-text);
+  --primary: var(--cm-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--cm-elevated);
+  --secondary-foreground: var(--cm-text);
+  --muted: var(--cm-elevated);
+  --muted-foreground: var(--cm-muted);
+  --accent: var(--cm-elevated);
+  --accent-foreground: var(--cm-text);
+  --destructive: var(--cm-red);
+  --border: var(--cm-line);
+  --input: var(--cm-line-strong);
+  --ring: var(--cm-accent);
+  --chart-1: var(--cm-accent);
+  --chart-2: var(--cm-blue);
+  --chart-3: var(--cm-green);
+  --chart-4: var(--cm-amber);
+  --chart-5: var(--cm-purple);
+  --sidebar: var(--cm-sidebar);
+  --sidebar-foreground: var(--cm-text);
+  --sidebar-primary: var(--cm-accent);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--cm-elevated);
+  --sidebar-accent-foreground: var(--cm-text);
+  --sidebar-border: var(--cm-line);
+  --sidebar-ring: var(--cm-accent);
 }
 
 @layer base {
@@ -97,4 +142,30 @@
     @apply font-sans;
     color-scheme: dark;
   }
+  /* Keyboard-only focus ring in the brand accent (mouse clicks stay clean). */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--cm-accent);
+    outline-offset: 1px;
+    border-radius: 4px;
+  }
+}
+
+/* Staggered fade-up for list/board items. Apply `.cm-row` and set an inline
+   animation-delay of `index * 26ms`. See docs/DESIGN.md §3. */
+@keyframes cm-up {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.cm-row {
+  animation: cm-up 0.26s cubic-bezier(0.2, 0.7, 0.3, 1) both;
 }

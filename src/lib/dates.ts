@@ -45,3 +45,26 @@ export function formatDue(dueAt: string): string {
   });
   return `${date} · ${time}`;
 }
+
+/** Compact right-column date, e.g. "Jul 6". */
+export function formatShort(dueAt: string): string {
+  return new Date(dueAt).toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+  });
+}
+
+/** Map a due bucket to a Linear priority level (0 none → 3 high). */
+export function priorityForBucket(bucket: Bucket): 0 | 1 | 2 | 3 {
+  switch (bucket) {
+    case "Overdue":
+    case "Today":
+      return 3;
+    case "Tomorrow":
+      return 2;
+    case "This week":
+      return 1;
+    default:
+      return 0;
+  }
+}

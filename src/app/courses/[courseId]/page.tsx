@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import {
   getCourse,
   getCourseAnnouncements,
@@ -8,6 +9,8 @@ import {
 } from "@/lib/canvas/client";
 import { ErrorBox, toLoadError, type LoadError } from "@/components/error-box";
 import { formatDue } from "@/lib/dates";
+import { StatusIcon } from "@/components/ui/status-icon";
+import { Pill } from "@/components/ui/pill";
 import type {
   CanvasAnnouncement,
   CanvasAssignment,
@@ -22,24 +25,25 @@ function stripHtml(html: string | null): string {
   return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function submissionLabel(a: CanvasAssignment): {
+function submission(a: CanvasAssignment): {
+  done: boolean;
   text: string;
-  cls: string;
+  color: string;
 } {
   const s = a.submission;
   if (s?.workflow_state === "graded") {
     const score = s.score != null ? `${s.score}` : "";
     const out = a.points_possible != null ? `/${a.points_possible}` : "";
-    return { text: `Graded ${score}${out}`.trim(), cls: "text-emerald-400" };
+    return { done: true, text: `Graded ${score}${out}`.trim(), color: "var(--cm-green)" };
   }
   if (s?.submitted_at || s?.workflow_state === "submitted") {
-    return { text: "Submitted", cls: "text-sky-400" };
+    return { done: true, text: "Submitted", color: "var(--cm-blue)" };
   }
-  if (s?.missing) return { text: "Missing", cls: "text-red-400" };
+  if (s?.missing) return { done: false, text: "Missing", color: "var(--cm-red)" };
   if (a.due_at && new Date(a.due_at) < new Date()) {
-    return { text: "Overdue", cls: "text-red-400" };
+    return { done: false, text: "Overdue", color: "var(--cm-red)" };
   }
-  return { text: "Not submitted", cls: "text-zinc-500" };
+  return { done: false, text: "Not submitted", color: "var(--cm-faint)" };
 }
 
 export default async function CoursePage({
@@ -51,7 +55,6 @@ export default async function CoursePage({
   const id = Number(courseId);
   const hasToken = !!process.env.CANVAS_TOKEN;
 
-  // Fetch the course first; if that fails the page can't render.
   let courseName = `Course ${id}`;
   let courseCode = "";
   let fatal: LoadError | null = null;
@@ -65,13 +68,12 @@ export default async function CoursePage({
 
   if (fatal) {
     return (
-      <main className="mx-auto max-w-3xl px-6 py-10">
+      <div className="px-4 py-6">
         <ErrorBox error={fatal} />
-      </main>
+      </div>
     );
   }
 
-  // Everything else degrades gracefully — a failed section just renders empty.
   const [assignmentsR, modulesR, announcementsR, enrollmentsR] =
     await Promise.allSettled([
       getCourseAssignments(id),
@@ -95,19 +97,22 @@ export default async function CoursePage({
     .sort((a, b) => (a.due_at as string).localeCompare(b.due_at as string));
 
   return (
-    <main className="mx-auto max-w-3xl space-y-10 px-6 py-10">
+    <div className="mx-auto max-w-4xl space-y-8 px-4 py-6">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <Link href="/courses" className="text-xs text-zinc-500 hover:text-zinc-300">
-            ← Courses
+          <Link
+            href="/courses"
+            className="inline-flex items-center gap-1 text-[12px] text-faint hover:text-muted-foreground"
+          >
+            <ArrowLeft size={13} /> Courses
           </Link>
-          <h1 className="mt-1 text-2xl font-bold text-zinc-100">{courseName}</h1>
-          <p className="text-sm text-zinc-500">{courseCode}</p>
+          <h1 className="mt-1 text-xl font-semibold">{courseName}</h1>
+          <p className="font-mono text-[12px] text-faint">{courseCode}</p>
         </div>
         {grade && grade.current_score != null && (
-          <div className="shrink-0 rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-2 text-right">
-            <p className="text-xs text-zinc-500">Current grade</p>
-            <p className="text-xl font-semibold text-zinc-100">
+          <div className="shrink-0 rounded-lg border border-line bg-card px-4 py-2 text-right">
+            <p className="text-[11px] text-faint">Current grade</p>
+            <p className="text-lg font-semibold">
               {grade.current_grade ?? `${grade.current_score}%`}
             </p>
           </div>
@@ -118,25 +123,26 @@ export default async function CoursePage({
         {dated.length === 0 ? (
           <Empty>No dated assignments.</Empty>
         ) : (
-          <div className="space-y-2">
+          <div className="-mx-2">
             {dated.map((a) => {
-              const label = submissionLabel(a);
+              const s = submission(a);
               return (
                 <a
                   key={a.id}
                   href={a.html_url}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-baseline justify-between gap-4 rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-3 hover:border-zinc-700"
+                  className="group flex items-center gap-2.5 rounded-lg px-3 py-2 hover:bg-elevated"
                 >
-                  <div className="min-w-0">
-                    <p className="truncate text-zinc-100">{a.name}</p>
-                    <p className="text-xs text-zinc-500">
+                  <StatusIcon status={s.done ? "done" : "todo"} />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-medium group-hover:text-brand">{a.name}</p>
+                    <p className="text-[11px] text-faint">
                       {a.due_at ? formatDue(a.due_at) : "No due date"}
                     </p>
                   </div>
-                  <span className={`shrink-0 text-xs ${label.cls}`}>
-                    {label.text}
+                  <span className="shrink-0 text-[12px]" style={{ color: s.color }}>
+                    {s.text}
                   </span>
                 </a>
               );
@@ -152,20 +158,18 @@ export default async function CoursePage({
           <div className="space-y-4">
             {modules.map((m) => (
               <div key={m.id}>
-                <p className="mb-1 text-sm font-medium text-zinc-300">{m.name}</p>
-                <ul className="space-y-1 border-l border-zinc-800 pl-3">
+                <p className="mb-1.5 text-[13px] font-medium text-muted-foreground">{m.name}</p>
+                <ul className="space-y-0.5 border-l border-line pl-3">
                   {(m.items ?? []).map((it) => (
-                    <li key={it.id} className="text-sm">
+                    <li key={it.id}>
                       <a
                         href={it.html_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-zinc-400 hover:text-zinc-200"
+                        className="flex items-center gap-2 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:bg-elevated hover:text-foreground"
                       >
-                        <span className="mr-2 text-xs text-zinc-600">
-                          {it.type}
-                        </span>
-                        {it.title}
+                        <span className="font-mono text-[10px] text-faint">{it.type}</span>
+                        <span className="truncate">{it.title}</span>
                       </a>
                     </li>
                   ))}
@@ -187,20 +191,18 @@ export default async function CoursePage({
                 href={an.html_url}
                 target="_blank"
                 rel="noreferrer"
-                className="block rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-3 hover:border-zinc-700"
+                className="block rounded-lg border border-line bg-card px-4 py-3 hover:border-line-strong"
               >
                 <div className="flex items-baseline justify-between gap-4">
-                  <p className="truncate font-medium text-zinc-100">
-                    {an.title}
-                  </p>
+                  <p className="truncate text-[13px] font-medium">{an.title}</p>
                   {an.posted_at && (
-                    <span className="shrink-0 text-xs text-zinc-500">
+                    <span className="shrink-0 text-[11px] text-faint">
                       {formatDue(an.posted_at)}
                     </span>
                   )}
                 </div>
                 {an.message && (
-                  <p className="mt-1 line-clamp-2 text-xs text-zinc-500">
+                  <p className="mt-1 line-clamp-2 text-[12px] text-faint">
                     {stripHtml(an.message)}
                   </p>
                 )}
@@ -209,7 +211,7 @@ export default async function CoursePage({
           </div>
         )}
       </Section>
-    </main>
+    </div>
   );
 }
 
@@ -224,9 +226,9 @@ function Section({
 }) {
   return (
     <section>
-      <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-zinc-400">
+      <h2 className="mb-2 flex items-center gap-2 text-[13px] font-semibold">
         {title}
-        <span className="ml-2 text-zinc-600">{count}</span>
+        <Pill className="px-1.5 py-0 text-[11px]">{count}</Pill>
       </h2>
       {children}
     </section>
@@ -235,7 +237,7 @@ function Section({
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-lg border border-zinc-800 bg-zinc-900/40 px-4 py-3 text-sm text-zinc-500">
+    <p className="rounded-lg border border-line bg-panel px-4 py-3 text-[13px] text-faint">
       {children}
     </p>
   );

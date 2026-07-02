@@ -1,9 +1,14 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { getActiveCourses } from "@/lib/canvas/client";
 import { ErrorBox, toLoadError, type LoadError } from "@/components/error-box";
+import { Dot } from "@/components/ui/pill";
 import type { CanvasCourse } from "@/lib/canvas/types";
 
 export const dynamic = "force-dynamic";
+
+const COURSE_COLORS = ["#8b7cf6", "#4aa3df", "#2fbf9f", "#e2b53d", "#eb5757", "#a06bf5"];
+const courseColor = (id: number) => COURSE_COLORS[id % COURSE_COLORS.length];
 
 export default async function CoursesPage() {
   let courses: CanvasCourse[] | undefined;
@@ -15,26 +20,37 @@ export default async function CoursesPage() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="mb-6 text-2xl font-bold text-zinc-100">Courses</h1>
+    <div className="py-2">
+      <div className="mb-2 flex items-baseline justify-between px-4 pt-1">
+        <h1 className="text-[15px] font-semibold">Courses</h1>
+        <p className="text-[12px] text-faint">{courses?.length ?? 0} active</p>
+      </div>
+
       {error ? (
-        <ErrorBox error={error} />
+        <div className="px-4 py-4">
+          <ErrorBox error={error} />
+        </div>
       ) : courses && courses.length === 0 ? (
-        <p className="text-zinc-400">No active courses.</p>
+        <p className="px-4 py-6 text-muted-foreground">No active courses.</p>
       ) : (
-        <div className="space-y-2">
-          {courses?.map((c) => (
+        <div className="px-2">
+          {courses?.map((c, i) => (
             <Link
               key={c.id}
               href={`/courses/${c.id}`}
-              className="block rounded-lg border border-zinc-800 bg-zinc-900/60 px-4 py-3 transition-colors hover:border-zinc-700 hover:bg-zinc-900"
+              className="cm-row group flex items-center gap-3 rounded-lg px-4 py-2.5 hover:bg-elevated"
+              style={{ animationDelay: `${i * 26}ms` }}
             >
-              <p className="font-medium text-zinc-100">{c.name}</p>
-              <p className="text-xs text-zinc-500">{c.course_code}</p>
+              <Dot color={courseColor(c.id)} className="h-2 w-2" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13px] font-medium">{c.name}</p>
+              </div>
+              <span className="font-mono text-[11px] text-faint">{c.course_code}</span>
+              <ChevronRight size={15} className="text-faint opacity-0 transition-opacity group-hover:opacity-100" />
             </Link>
           ))}
         </div>
       )}
-    </main>
+    </div>
   );
 }

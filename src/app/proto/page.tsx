@@ -415,7 +415,7 @@ function RowItem({ r, i, selected, onClick }: { r: Row; i: number; selected: boo
   return (
     <div
       onClick={onClick}
-      className="proto-row proto-r group mx-2 flex cursor-pointer items-center gap-2.5 rounded-lg py-[7px] pr-3 pl-7"
+      className="proto-row proto-r group mx-2 flex min-w-0 cursor-pointer items-center gap-2.5 rounded-lg py-[7px] pr-3 pl-7"
       style={{
         background: selected ? C.accentSoft : undefined,
         boxShadow: selected ? `inset 0 0 0 1px ${C.accent}55` : undefined,
@@ -427,7 +427,7 @@ function RowItem({ r, i, selected, onClick }: { r: Row; i: number; selected: boo
         {r.id}
       </span>
       <StatusIcon status={r.status} />
-      <span className="truncate font-medium" style={{ color: C.text }}>
+      <span className="min-w-0 flex-1 truncate font-medium" style={{ color: C.text }} title={r.title}>
         {r.title}
       </span>
       {r.parent && (
@@ -561,7 +561,7 @@ function Board() {
 function BoardCard({ r, i }: { r: Row; i: number }) {
   return (
     <div
-      className="proto-row proto-card flex cursor-pointer flex-col gap-2 rounded-lg p-3"
+      className="proto-row proto-card flex min-w-0 cursor-pointer flex-col gap-2 rounded-lg p-3"
       style={{ background: C.card, border: `1px solid ${C.border}`, animationDelay: `${i * 40}ms`, transition: "background .1s, border-color .1s" }}
     >
       {/* id + assignee */}
@@ -581,11 +581,11 @@ function BoardCard({ r, i }: { r: Row; i: number }) {
       </div>
 
       {/* status + title */}
-      <div className="flex items-start gap-2">
-        <span className="mt-[2px]">
+      <div className="flex min-w-0 items-start gap-2">
+        <span className="mt-[2px] shrink-0">
           <StatusIcon status={r.status} />
         </span>
-        <span className="font-medium leading-snug" style={{ color: C.text }}>
+        <span className="line-clamp-2 min-w-0 flex-1 font-medium leading-snug" style={{ color: C.text }} title={r.title}>
           {r.title}
         </span>
       </div>

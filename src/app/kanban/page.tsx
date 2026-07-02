@@ -16,34 +16,43 @@ export default async function KanbanPage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="mb-6 flex items-baseline justify-between gap-4">
-        <h1 className="text-2xl font-bold text-zinc-100">Kanban</h1>
-        <p className="text-xs text-zinc-500">
+    <div className="flex h-full flex-col">
+      <div className="flex items-baseline justify-between gap-4 px-4 pt-3 pb-1">
+        <h1 className="text-[15px] font-semibold">Board</h1>
+        <p className="text-[12px] text-faint">
           Module items across all courses. Drag or use the menu to move.
         </p>
       </div>
 
       {!dbEnabled && (
-        <div className="mb-6 rounded-lg border border-amber-900/60 bg-amber-950/30 p-4 text-sm text-amber-200">
-          <p className="font-medium">No database connected</p>
-          <p className="mt-1 text-amber-200/80">
-            Lanes show their auto-computed position but moves won&apos;t persist.
-            Set <code>DATABASE_URL</code> in <code>.env.local</code> and run{" "}
-            <code>pnpm db:push</code>.
-          </p>
+        <div
+          className="mx-3 mb-1 rounded-lg border p-3 text-[13px]"
+          style={{
+            borderColor: "color-mix(in oklch, var(--cm-amber), transparent 60%)",
+            background: "color-mix(in oklch, var(--cm-amber), transparent 90%)",
+            color: "color-mix(in oklch, var(--cm-amber), white 45%)",
+          }}
+        >
+          <span className="font-medium">No database connected — </span>
+          lanes show their auto-computed position but moves won&apos;t persist. Set{" "}
+          <code>DATABASE_URL</code> in <code>.env.local</code> and run{" "}
+          <code>pnpm db:push</code>.
         </div>
       )}
 
       {error ? (
-        <ErrorBox error={error} />
+        <div className="px-4 py-4">
+          <ErrorBox error={error} />
+        </div>
       ) : cards && cards.length === 0 ? (
-        <p className="text-zinc-400">
+        <p className="px-4 py-6 text-muted-foreground">
           No module items found in your active courses.
         </p>
       ) : (
-        <Board cards={cards ?? []} persists={dbEnabled} />
+        <div className="min-h-0 flex-1">
+          <Board cards={cards ?? []} persists={dbEnabled} />
+        </div>
       )}
-    </main>
+    </div>
   );
 }

@@ -24,14 +24,21 @@ const HINTS: Record<number, string> = {
 export function ErrorBox({ error }: { error: LoadError }) {
   const hint = error.status ? HINTS[error.status] : undefined;
   return (
-    <div className="rounded-lg border border-red-900/60 bg-red-950/40 p-4 text-sm text-red-200">
+    <div
+      className="rounded-lg border p-4 text-sm"
+      style={{
+        borderColor: "color-mix(in oklch, var(--cm-red), transparent 60%)",
+        background: "color-mix(in oklch, var(--cm-red), transparent 88%)",
+        color: "color-mix(in oklch, var(--cm-red), white 55%)",
+      }}
+    >
       <p className="font-medium">
         Couldn&apos;t load Canvas data{error.status ? ` (${error.status})` : ""}
       </p>
-      <p className="mt-1 font-mono text-xs text-red-300/80">{error.message}</p>
-      {hint && <p className="mt-2 text-red-200/80">{hint}</p>}
+      <p className="mt-1 font-mono text-xs opacity-80">{error.message}</p>
+      {hint && <p className="mt-2 opacity-80">{hint}</p>}
       {error.noToken && (
-        <p className="mt-2 text-red-200/80">
+        <p className="mt-2 opacity-80">
           Set <code>CANVAS_TOKEN</code> in <code>.env.local</code> and restart —
           see{" "}
           <Link href="/settings" className="underline">
