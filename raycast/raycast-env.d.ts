@@ -10,8 +10,8 @@
 type ExtensionPreferences = {
   /** Canvas Access Token - Canvas → Account → Settings → New Access Token. */
   "canvasToken": string,
-  /** Canvas API Base URL - Your school's Canvas REST API base (include /api/v1). */
-  "canvasBaseUrl": string
+  /** Institution URL - Your school's Canvas address, e.g. myschool.instructure.com */
+  "institutionUrl": string
 }
 
 /** Preferences accessible in all the extension's commands */

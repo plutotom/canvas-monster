@@ -3,7 +3,7 @@ import type { CanvasAssignment, CanvasCourse, CanvasSubmission } from "./types";
 
 interface Prefs {
   canvasToken: string;
-  canvasBaseUrl: string;
+  institutionUrl: string;
 }
 
 export class CanvasError extends Error {
@@ -16,12 +16,28 @@ export class CanvasError extends Error {
   }
 }
 
+/**
+ * Turn whatever the student typed for their school into a clean host.
+ * Accepts e.g. "purdue.instructure.com", "https://purdue.instructure.com/",
+ * or even "https://purdue.instructure.com/api/v1".
+ */
+export function normalizeHost(input: string): string {
+  return input
+    .trim()
+    .replace(/^https?:\/\//i, "") // drop protocol
+    .replace(/\/+$/, "") // drop trailing slashes
+    .replace(/\/api\/v1$/i, "") // drop an accidentally-pasted API path
+    .replace(/\/+$/, "");
+}
+
 function config() {
-  const { canvasToken, canvasBaseUrl } = getPreferenceValues<Prefs>();
-  const baseUrl = (
-    canvasBaseUrl || "https://wheaton.instructure.com/api/v1"
-  ).replace(/\/$/, "");
-  return { token: canvasToken, baseUrl };
+  const { canvasToken, institutionUrl } = getPreferenceValues<Prefs>();
+  const host = normalizeHost(institutionUrl || "wheaton.instructure.com");
+  return {
+    token: canvasToken,
+    host: `https://${host}`,
+    baseUrl: `https://${host}/api/v1`,
+  };
 }
 
 /** rel="next" URL from an RFC5988 Link header, if present. */
@@ -82,10 +98,10 @@ export async function canvasGetAll<T>(
   return out;
 }
 
-/** The human web URL for a course (base host minus the /api/v1 suffix). */
+/** The human web URL for a course. */
 export function courseWebUrl(courseId: number): string {
-  const { baseUrl } = config();
-  return `${baseUrl.replace(/\/api\/v1$/, "")}/courses/${courseId}`;
+  const { host } = config();
+  return `${host}/courses/${courseId}`;
 }
 
 export function getActiveCourses(): Promise<CanvasCourse[]> {

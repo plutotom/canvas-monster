@@ -16,8 +16,8 @@ URL.
 
 1. In Canvas, create a token: **Account → Settings → New Access Token**.
 2. On first run, paste it into the extension's **Canvas Access Token** preference.
-3. If your school isn't Wheaton, set **Canvas API Base URL** to your school's
-   value, e.g. `https://<school>.instructure.com/api/v1`.
+3. Set **Institution URL** to your school's Canvas address, e.g.
+   `myschool.instructure.com`. (You can paste the full URL — it's normalized.)
 
 Your token is stored in Raycast's secure preferences and is only sent to your
 Canvas instance.

@@ -32,12 +32,13 @@
       "required": true
     },
     {
-      "name": "canvasBaseUrl",
-      "title": "Canvas API Base URL",
-      "description": "Your school's Canvas REST API base (include /api/v1).",
+      "name": "institutionUrl",
+      "title": "Institution URL",
+      "description": "Your school's Canvas address, e.g. myschool.instructure.com",
+      "placeholder": "myschool.instructure.com",
       "type": "textfield",
-      "required": false,
-      "default": "https://wheaton.instructure.com/api/v1"
+      "required": true,
+      "default": "wheaton.instructure.com"
     }
   ],
   "dependencies": {
