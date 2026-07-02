@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { bucketFor, priorityForBucket } from "./dates";
+import { bucketFor, priorityForBucket } from "@/lib/dates";
 
 describe("bucketFor", () => {
   const now = new Date("2026-07-02T12:00:00");
