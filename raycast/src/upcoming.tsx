@@ -7,6 +7,7 @@ import {
   openExtensionPreferences,
 } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
+import { useState } from "react";
 import {
   getActiveCourses,
   getCourseAssignments,
@@ -66,6 +67,11 @@ export default function Command() {
     { keepPreviousData: true },
   );
 
+  // Sort direction. loadUpcoming() returns soonest-first; "desc" flips both the
+  // bucket order (Later → Overdue) and the items within each bucket. Declared
+  // before the early error return so hook order stays stable.
+  const [dir, setDir] = useState<"asc" | "desc">("asc");
+
   if (error) {
     return (
       <List>
@@ -98,6 +104,16 @@ export default function Command() {
 
   const now = new Date();
   const items = data ?? [];
+  const buckets = dir === "asc" ? BUCKET_ORDER : [...BUCKET_ORDER].reverse();
+
+  const sortAction = (
+    <Action
+      title={dir === "asc" ? "Sort: Latest First" : "Sort: Soonest First"}
+      icon={dir === "asc" ? Icon.ArrowDown : Icon.ArrowUp}
+      shortcut={{ modifiers: ["cmd"], key: "p" }}
+      onAction={() => setDir(dir === "asc" ? "desc" : "asc")}
+    />
+  );
 
   return (
     <List isLoading={isLoading} searchBarPlaceholder="Filter upcoming work…">
@@ -106,18 +122,19 @@ export default function Command() {
         title={isLoading ? "Loading…" : "Nothing due"}
         description={isLoading ? undefined : "You're all caught up. 🎉"}
       />
-      {BUCKET_ORDER.map((bucket) => {
+      {buckets.map((bucket) => {
         const inBucket = items.filter(
           (it) => bucketFor(it.dueAt, now) === bucket,
         );
         if (inBucket.length === 0) return null;
+        const ordered = dir === "asc" ? inBucket : [...inBucket].reverse();
         return (
           <List.Section
             key={bucket}
             title={bucket}
             subtitle={`${inBucket.length}`}
           >
-            {inBucket.map((it) => (
+            {ordered.map((it) => (
               <List.Item
                 key={it.id}
                 icon={{ source: Icon.Circle, tintColor: BUCKET_COLOR[bucket] }}
@@ -138,6 +155,7 @@ export default function Command() {
                       content={it.url}
                       title="Copy Link"
                     />
+                    {sortAction}
                     <Action
                       title="Refresh"
                       icon={Icon.ArrowClockwise}
