@@ -1,5 +1,6 @@
 import "server-only";
 
+import { unstable_cache } from "next/cache";
 import type {
   CanvasAnnouncement,
   CanvasAssignment,
@@ -112,54 +113,97 @@ export async function canvasGetAll<T>(
     url = nextLink(res.headers.get("link"));
     pages += 1;
   }
+
+  // Don't silently truncate: if a rel="next" link remains, we stopped early.
+  if (url) {
+    console.warn(
+      `[canvas] Pagination cap of ${maxPages} pages hit for "${path}" ` +
+        `(${out.length} items collected); results may be truncated. ` +
+        `Raise maxPages if this course legitimately has more.`,
+    );
+  }
+
   return out;
 }
 
 // ---- Typed convenience wrappers -------------------------------------------
+//
+// Each read is wrapped in unstable_cache: a server-side data cache keyed by the
+// function's key parts + arguments. Repeated page loads/navigations within the
+// revalidate window reuse the cached Canvas response instead of re-hitting the
+// API — this is what protects the ~700 req/hr rate limit, not client caching.
+// Because the cache is shared, the dashboard and calendar reuse the same
+// per-course assignment fetches. All entries share the "canvas" tag so a single
+// revalidateTag("canvas") (the Refresh button) busts everything on demand.
 
-export function getActiveCourses(): Promise<CanvasCourse[]> {
-  return canvasGetAll<CanvasCourse>(
-    "/courses?enrollment_state=active&per_page=100",
-  );
-}
+/** Time-based revalidation windows, tuned to how often each entity changes. */
+export const CANVAS_TTL = {
+  courses: 3600, // rarely changes mid-term
+  content: 600, // assignments, modules, announcements
+  grades: 300,
+  todo: 180, // most time-sensitive
+} as const;
 
-export function getCourseAssignments(
-  courseId: number,
-): Promise<CanvasAssignment[]> {
-  return canvasGetAll<CanvasAssignment>(
-    `/courses/${courseId}/assignments?include[]=submission&per_page=100`,
-  );
-}
+export const CANVAS_CACHE_TAG = "canvas";
 
-export function getCourseModules(courseId: number): Promise<CanvasModule[]> {
-  return canvasGetAll<CanvasModule>(
-    `/courses/${courseId}/modules?include[]=items&per_page=100`,
-  );
-}
+export const getActiveCourses = unstable_cache(
+  (): Promise<CanvasCourse[]> =>
+    canvasGetAll<CanvasCourse>(
+      "/courses?enrollment_state=active&per_page=100",
+    ),
+  ["canvas:active-courses"],
+  { revalidate: CANVAS_TTL.courses, tags: [CANVAS_CACHE_TAG, "courses"] },
+);
 
-export function getSelfEnrollments(
-  courseId: number,
-): Promise<CanvasEnrollment[]> {
-  return canvasGetAll<CanvasEnrollment>(
-    `/courses/${courseId}/enrollments?user_id=self`,
-  );
-}
+export const getCourseAssignments = unstable_cache(
+  (courseId: number): Promise<CanvasAssignment[]> =>
+    canvasGetAll<CanvasAssignment>(
+      `/courses/${courseId}/assignments?include[]=submission&per_page=100`,
+    ),
+  ["canvas:course-assignments"],
+  { revalidate: CANVAS_TTL.content, tags: [CANVAS_CACHE_TAG, "assignments"] },
+);
 
-export function getTodo(): Promise<CanvasTodoItem[]> {
-  return canvasGetAll<CanvasTodoItem>("/users/self/todo?per_page=100");
-}
+export const getCourseModules = unstable_cache(
+  (courseId: number): Promise<CanvasModule[]> =>
+    canvasGetAll<CanvasModule>(
+      `/courses/${courseId}/modules?include[]=items&per_page=100`,
+    ),
+  ["canvas:course-modules"],
+  { revalidate: CANVAS_TTL.content, tags: [CANVAS_CACHE_TAG, "modules"] },
+);
 
-export function getCourse(courseId: number): Promise<CanvasCourse> {
-  return canvasGet<CanvasCourse>(`/courses/${courseId}`);
-}
+export const getSelfEnrollments = unstable_cache(
+  (courseId: number): Promise<CanvasEnrollment[]> =>
+    canvasGetAll<CanvasEnrollment>(
+      `/courses/${courseId}/enrollments?user_id=self`,
+    ),
+  ["canvas:self-enrollments"],
+  { revalidate: CANVAS_TTL.grades, tags: [CANVAS_CACHE_TAG, "grades"] },
+);
 
-export function getCourseAnnouncements(
-  courseId: number,
-): Promise<CanvasAnnouncement[]> {
-  return canvasGetAll<CanvasAnnouncement>(
-    `/courses/${courseId}/discussion_topics?only_announcements=true&per_page=20`,
-  );
-}
+export const getTodo = unstable_cache(
+  (): Promise<CanvasTodoItem[]> =>
+    canvasGetAll<CanvasTodoItem>("/users/self/todo?per_page=100"),
+  ["canvas:todo"],
+  { revalidate: CANVAS_TTL.todo, tags: [CANVAS_CACHE_TAG, "todo"] },
+);
+
+export const getCourse = unstable_cache(
+  (courseId: number): Promise<CanvasCourse> =>
+    canvasGet<CanvasCourse>(`/courses/${courseId}`),
+  ["canvas:course"],
+  { revalidate: CANVAS_TTL.courses, tags: [CANVAS_CACHE_TAG, "courses"] },
+);
+
+export const getCourseAnnouncements = unstable_cache(
+  (courseId: number): Promise<CanvasAnnouncement[]> =>
+    canvasGetAll<CanvasAnnouncement>(
+      `/courses/${courseId}/discussion_topics?only_announcements=true&per_page=20`,
+    ),
+  ["canvas:course-announcements"],
+  { revalidate: CANVAS_TTL.content, tags: [CANVAS_CACHE_TAG, "announcements"] },
+);
 
 /** Verify the token/base URL by making one cheap authenticated call. */
 export async function testConnection(): Promise<{

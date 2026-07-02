@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# canvas-monster
 
-## Getting Started
+A cleaner, personal UI over Wheaton's Canvas LMS. Next.js (App Router) +
+TypeScript + Tailwind + shadcn. See [`PLAN.md`](./PLAN.md) for the full design.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Create a Canvas token: **Account → Settings → New Access Token**.
+2. Copy `.env.example` to `.env.local` and fill it in:
+   ```
+   CANVAS_TOKEN=your_token_here
+   CANVAS_BASE_URL=https://wheaton.instructure.com/api/v1
+   ```
+3. Install and run:
+   ```
+   pnpm install
+   pnpm dev
+   ```
+4. Open http://localhost:4123 (the app runs on port **4123**).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The token is read server-side only and never shipped to the browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Pages
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/` — Dashboard: upcoming, unsubmitted work across all courses, bucketed by
+  Overdue / Today / Tomorrow / This week / Later.
+- `/courses`, `/courses/[id]` — course list and detail (assignments, modules,
+  announcements, current grade).
+- `/calendar` — month grid of due dates with prev/next/today navigation.
+- `/settings` — live connection test + token instructions.
+- `/debug` — raw Canvas JSON, to confirm data is flowing.
 
-## Learn More
+## Architecture notes
 
-To learn more about Next.js, take a look at the following resources:
+### Data fetching & caching
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+All Canvas calls happen **server-side** inside React Server Components — the
+browser never talks to Canvas directly. Each read in `src/lib/canvas/client.ts`
+is wrapped in Next's `unstable_cache` with a time-based TTL and a shared
+`"canvas"` tag:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Data | Revalidate |
+|---|---|
+| Courses | 1 hr |
+| Assignments / modules / announcements | 10 min |
+| Grades | 5 min |
+| To-do / dashboard | 3 min |
 
-## Deploy on Vercel
+This is what protects the Canvas rate limit (~700 req/hr): repeated reloads and
+navigations within the TTL window reuse the cached response instead of re-hitting
+Canvas. Because the cache is keyed by URL, the dashboard and calendar share the
+same per-course assignment fetches. The **↻ Refresh** button in the nav calls a
+server action that invalidates the `"canvas"` tag for an on-demand refresh.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Canvas list pagination (`Link` header) is followed automatically in
+`canvasGetAll`, which warns to the server console if it hits its `maxPages` cap
+rather than silently truncating.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### TODO: React Query (deferred — see below)
+
+We deliberately did **not** add React Query. In the current server-component
+architecture it would **not** reduce Canvas API calls — it's a client-side cache
+and would only cache the browser → route-handler hop, not the route-handler →
+Canvas hop that the rate limit counts. Server-side revalidation (above) is the
+correct tool for protecting the rate limit.
+
+React Query becomes worth adding **only when we want live/interactive UX**:
+background refetch on window focus, polling the dashboard without full reloads,
+or mutations (e.g. marking a todo done, or pinning items in the phase-2 Notion
+work). At that point the right shape is **React Query on the client sitting on
+top of the already-server-cached route handlers** — the client gets snappy
+refresh while Canvas is still only hit on the TTL. Order matters: server caching
+first, React Query second. Until we want that UX, it's unnecessary complexity.

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { refreshCanvas } from "@/app/actions";
 
 const LINKS = [
   { href: "/", label: "Dashboard" },
@@ -37,6 +38,15 @@ export function Nav() {
             );
           })}
         </div>
+        <form action={refreshCanvas} className="ml-auto">
+          <button
+            type="submit"
+            title="Re-fetch all Canvas data now (bypasses the cache)"
+            className="rounded border border-zinc-800 px-2 py-1 text-xs text-zinc-400 hover:border-zinc-700 hover:text-zinc-200"
+          >
+            ↻ Refresh
+          </button>
+        </form>
       </div>
     </nav>
   );
