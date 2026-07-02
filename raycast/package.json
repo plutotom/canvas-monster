@@ -1,0 +1,62 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "canvas-monster",
+  "title": "Canvas Monster",
+  "description": "Check upcoming Canvas assignments and jump to your courses from Raycast.",
+  "icon": "icon.png",
+  "author": "isaiah",
+  "categories": ["Productivity"],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "upcoming",
+      "title": "Upcoming",
+      "subtitle": "Canvas",
+      "description": "Upcoming, unsubmitted assignments across all your courses.",
+      "mode": "view"
+    },
+    {
+      "name": "courses",
+      "title": "Search Courses",
+      "subtitle": "Canvas",
+      "description": "Search your active courses and open them in Canvas.",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "canvasToken",
+      "title": "Canvas Access Token",
+      "description": "Canvas → Account → Settings → New Access Token.",
+      "type": "password",
+      "required": true
+    },
+    {
+      "name": "canvasBaseUrl",
+      "title": "Canvas API Base URL",
+      "description": "Your school's Canvas REST API base (include /api/v1).",
+      "type": "textfield",
+      "required": false,
+      "default": "https://wheaton.instructure.com/api/v1"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.83.0",
+    "@raycast/utils": "^1.17.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "eslint": "^9.0.0",
+    "prettier": "^3.3.0",
+    "typescript": "^5.6.0"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
