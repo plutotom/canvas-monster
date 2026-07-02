@@ -22,7 +22,10 @@ export const dynamic = "force-dynamic";
 
 function stripHtml(html: string | null): string {
   if (!html) return "";
-  return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function submission(a: CanvasAssignment): {
@@ -34,12 +37,17 @@ function submission(a: CanvasAssignment): {
   if (s?.workflow_state === "graded") {
     const score = s.score != null ? `${s.score}` : "";
     const out = a.points_possible != null ? `/${a.points_possible}` : "";
-    return { done: true, text: `Graded ${score}${out}`.trim(), color: "var(--cm-green)" };
+    return {
+      done: true,
+      text: `Graded ${score}${out}`.trim(),
+      color: "var(--cm-green)",
+    };
   }
   if (s?.submitted_at || s?.workflow_state === "submitted") {
     return { done: true, text: "Submitted", color: "var(--cm-blue)" };
   }
-  if (s?.missing) return { done: false, text: "Missing", color: "var(--cm-red)" };
+  if (s?.missing)
+    return { done: false, text: "Missing", color: "var(--cm-red)" };
   if (a.due_at && new Date(a.due_at) < new Date()) {
     return { done: false, text: "Overdue", color: "var(--cm-red)" };
   }
@@ -136,12 +144,17 @@ export default async function CoursePage({
                 >
                   <StatusIcon status={s.done ? "done" : "todo"} />
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-[13px] font-medium group-hover:text-brand">{a.name}</p>
+                    <p className="truncate text-[13px] font-medium group-hover:text-brand">
+                      {a.name}
+                    </p>
                     <p className="text-[11px] text-faint">
                       {a.due_at ? formatDue(a.due_at) : "No due date"}
                     </p>
                   </div>
-                  <span className="shrink-0 text-[12px]" style={{ color: s.color }}>
+                  <span
+                    className="shrink-0 text-[12px]"
+                    style={{ color: s.color }}
+                  >
                     {s.text}
                   </span>
                 </a>
@@ -158,7 +171,9 @@ export default async function CoursePage({
           <div className="space-y-4">
             {modules.map((m) => (
               <div key={m.id}>
-                <p className="mb-1.5 text-[13px] font-medium text-muted-foreground">{m.name}</p>
+                <p className="mb-1.5 text-[13px] font-medium text-muted-foreground">
+                  {m.name}
+                </p>
                 <ul className="space-y-0.5 border-l border-line pl-3">
                   {(m.items ?? []).map((it) => (
                     <li key={it.id}>
@@ -168,7 +183,9 @@ export default async function CoursePage({
                         rel="noreferrer"
                         className="flex items-center gap-2 rounded-md px-1.5 py-1 text-[13px] text-muted-foreground hover:bg-elevated hover:text-foreground"
                       >
-                        <span className="font-mono text-[10px] text-faint">{it.type}</span>
+                        <span className="font-mono text-[10px] text-faint">
+                          {it.type}
+                        </span>
                         <span className="truncate">{it.title}</span>
                       </a>
                     </li>

@@ -116,18 +116,20 @@ export default async function CalendarPage({
             </div>
           ))}
           {cells.map((d, i) => {
-            const items = d ? byDay.get(`${year}-${month0}-${d}`) ?? [] : [];
+            const items = d ? (byDay.get(`${year}-${month0}-${d}`) ?? []) : [];
             return (
               <div key={i} className="min-h-24 bg-app p-1.5 align-top">
                 {d && (
                   <>
                     <div
                       className={`mb-1 grid h-5 w-5 place-items-center rounded-full text-[11px] ${
-                        isToday(d)
-                          ? "font-semibold text-white"
-                          : "text-faint"
+                        isToday(d) ? "font-semibold text-white" : "text-faint"
                       }`}
-                      style={isToday(d) ? { background: "var(--cm-accent)" } : undefined}
+                      style={
+                        isToday(d)
+                          ? { background: "var(--cm-accent)" }
+                          : undefined
+                      }
                     >
                       {d}
                     </div>

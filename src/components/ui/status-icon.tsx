@@ -23,8 +23,17 @@ export function StatusIcon({
         : "var(--cm-faint)");
   return (
     <svg width={size} height={size} viewBox="0 0 16 16" className="shrink-0">
-      <circle cx="8" cy="8" r="6.5" fill="none" stroke={stroke} strokeWidth="1.5" />
-      {status === "progress" && <path d="M8 8 L8 2 A6 6 0 0 1 8 14 Z" fill={stroke} />}
+      <circle
+        cx="8"
+        cy="8"
+        r="6.5"
+        fill="none"
+        stroke={stroke}
+        strokeWidth="1.5"
+      />
+      {status === "progress" && (
+        <path d="M8 8 L8 2 A6 6 0 0 1 8 14 Z" fill={stroke} />
+      )}
       {status === "done" && (
         <>
           <circle cx="8" cy="8" r="6.5" fill={stroke} />

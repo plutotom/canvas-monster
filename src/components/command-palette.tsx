@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useRouter } from "next/navigation";
 import {
   BookOpen,
@@ -26,7 +33,14 @@ interface Command {
   run: () => void;
 }
 
-const COURSE_COLORS = ["#8b7cf6", "#4aa3df", "#2fbf9f", "#e2b53d", "#eb5757", "#a06bf5"];
+const COURSE_COLORS = [
+  "#8b7cf6",
+  "#4aa3df",
+  "#2fbf9f",
+  "#e2b53d",
+  "#eb5757",
+  "#a06bf5",
+];
 
 // `g` then a letter jumps to a view (Linear-style). Kept next to the palette so
 // the two keyboard entry points live together.
@@ -54,45 +68,98 @@ export function CommandPalette({
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const setOpen = useCallback(
+    (next: boolean) => {
+      if (next) {
+        setQ("");
+        setActive(0);
+      }
+      onOpenChange(next);
+    },
+    [onOpenChange],
+  );
+
   const commands = useMemo<Command[]>(() => {
     const go = (href: string) => () => {
       router.push(href);
-      onOpenChange(false);
+      setOpen(false);
     };
     return [
-      { id: "nav-dash", label: "Go to Dashboard", hint: "G D", keywords: "dashboard home work", icon: <Inbox size={15} />, run: go("/") },
-      { id: "nav-cal", label: "Go to Calendar", hint: "G C", keywords: "calendar month", icon: <Calendar size={15} />, run: go("/calendar") },
-      { id: "nav-board", label: "Go to Board", hint: "G K", keywords: "board kanban lanes", icon: <Columns3 size={15} />, run: go("/kanban") },
-      { id: "nav-courses", label: "Go to Courses", hint: "G O", keywords: "courses classes", icon: <BookOpen size={15} />, run: go("/courses") },
-      { id: "nav-settings", label: "Go to Settings", hint: "G S", keywords: "settings token connection", icon: <Settings size={15} />, run: go("/settings") },
+      {
+        id: "nav-dash",
+        label: "Go to Dashboard",
+        hint: "G D",
+        keywords: "dashboard home work",
+        icon: <Inbox size={15} />,
+        run: go("/"),
+      },
+      {
+        id: "nav-cal",
+        label: "Go to Calendar",
+        hint: "G C",
+        keywords: "calendar month",
+        icon: <Calendar size={15} />,
+        run: go("/calendar"),
+      },
+      {
+        id: "nav-board",
+        label: "Go to Board",
+        hint: "G K",
+        keywords: "board kanban lanes",
+        icon: <Columns3 size={15} />,
+        run: go("/kanban"),
+      },
+      {
+        id: "nav-courses",
+        label: "Go to Courses",
+        hint: "G O",
+        keywords: "courses classes",
+        icon: <BookOpen size={15} />,
+        run: go("/courses"),
+      },
+      {
+        id: "nav-settings",
+        label: "Go to Settings",
+        hint: "G S",
+        keywords: "settings token connection",
+        icon: <Settings size={15} />,
+        run: go("/settings"),
+      },
       {
         id: "act-refresh",
         label: "Refresh Canvas data",
         keywords: "refresh reload sync fetch",
         icon: <RefreshCw size={15} />,
         run: () => {
-          onOpenChange(false);
+          setOpen(false);
           startTransition(async () => {
             await refreshCanvas();
             toast("Canvas data refreshed", "success");
           });
         },
       },
-      ...courses.map<Command>((c, i) => ({
+      ...courses.map<Command>((c) => ({
         id: `course-${c.id}`,
         label: c.name,
         hint: c.course_code,
         keywords: `${c.name} ${c.course_code} course`,
-        icon: <Dot color={COURSE_COLORS[c.id % COURSE_COLORS.length]} className="h-2 w-2" />,
+        icon: (
+          <Dot
+            color={COURSE_COLORS[c.id % COURSE_COLORS.length]}
+            className="h-2 w-2"
+          />
+        ),
         run: go(`/courses/${c.id}`),
       })),
     ];
-  }, [courses, router, onOpenChange, toast, startTransition]);
+  }, [courses, router, setOpen, toast, startTransition]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return commands;
-    return commands.filter((c) => `${c.label} ${c.keywords}`.toLowerCase().includes(needle));
+    return commands.filter((c) =>
+      `${c.label} ${c.keywords}`.toLowerCase().includes(needle),
+    );
   }, [q, commands]);
 
   // Global: ⌘K toggles the palette; `g <key>` jumps between views.
@@ -102,11 +169,14 @@ export function CommandPalette({
     function onKey(e: KeyboardEvent) {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        onOpenChange(!open);
+        setOpen(!open);
         return;
       }
       const el = e.target as HTMLElement;
-      const typing = el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable;
+      const typing =
+        el.tagName === "INPUT" ||
+        el.tagName === "TEXTAREA" ||
+        el.isContentEditable;
       if (typing || e.metaKey || e.ctrlKey || e.altKey) return;
       if (e.key === "g") {
         gPending = true;
@@ -125,25 +195,14 @@ export function CommandPalette({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onOpenChange, router]);
-
-  // Reset + focus on open.
-  useEffect(() => {
-    if (open) {
-      setQ("");
-      setActive(0);
-      requestAnimationFrame(() => inputRef.current?.focus());
-    }
-  }, [open]);
-
-  useEffect(() => setActive(0), [q]);
+  }, [open, router, setOpen]);
 
   if (!open) return null;
 
   return (
     <div
       className="fixed inset-0 z-[70] flex items-start justify-center bg-black/50 pt-[15vh]"
-      onClick={() => onOpenChange(false)}
+      onClick={() => setOpen(false)}
     >
       <div
         className="cm-row w-full max-w-lg overflow-hidden rounded-xl border border-line-strong bg-elevated shadow-2xl"
@@ -153,8 +212,12 @@ export function CommandPalette({
           <Search size={15} className="text-faint" />
           <input
             ref={inputRef}
+            autoFocus
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setActive(0);
+            }}
             onKeyDown={(e) => {
               if (e.key === "ArrowDown") {
                 e.preventDefault();
@@ -166,7 +229,7 @@ export function CommandPalette({
                 e.preventDefault();
                 filtered[active]?.run();
               } else if (e.key === "Escape") {
-                onOpenChange(false);
+                setOpen(false);
               }
             }}
             placeholder="Jump to a view, course, or action…"
@@ -179,7 +242,9 @@ export function CommandPalette({
 
         <div className="max-h-80 overflow-y-auto p-1.5">
           {filtered.length === 0 && (
-            <p className="px-3 py-6 text-center text-[13px] text-faint">No results.</p>
+            <p className="px-3 py-6 text-center text-[13px] text-faint">
+              No results.
+            </p>
           )}
           {filtered.map((c, i) => (
             <button
@@ -187,14 +252,22 @@ export function CommandPalette({
               onMouseEnter={() => setActive(i)}
               onClick={c.run}
               className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px]"
-              style={{ background: i === active ? "var(--cm-accent-soft)" : undefined }}
+              style={{
+                background: i === active ? "var(--cm-accent-soft)" : undefined,
+              }}
             >
-              <span className="grid w-4 place-items-center text-muted-foreground">{c.icon}</span>
+              <span className="grid w-4 place-items-center text-muted-foreground">
+                {c.icon}
+              </span>
               <span className="flex-1 truncate">{c.label}</span>
               {c.hint && (
-                <span className="font-mono text-[10px] text-faint">{c.hint}</span>
+                <span className="font-mono text-[10px] text-faint">
+                  {c.hint}
+                </span>
               )}
-              {i === active && <CornerDownLeft size={12} className="text-faint" />}
+              {i === active && (
+                <CornerDownLeft size={12} className="text-faint" />
+              )}
             </button>
           ))}
         </div>

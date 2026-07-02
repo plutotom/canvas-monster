@@ -7,8 +7,7 @@ export const dynamic = "force-dynamic";
 // through the server-only client. No styling beyond monospace JSON dumps.
 
 type LoadResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: string; status?: number };
+  { ok: true; data: T } | { ok: false; error: string; status?: number };
 
 async function load<T>(fn: () => Promise<T>): Promise<LoadResult<T>> {
   try {
@@ -17,7 +16,10 @@ async function load<T>(fn: () => Promise<T>): Promise<LoadResult<T>> {
     if (err instanceof CanvasError) {
       return { ok: false, error: err.message, status: err.status };
     }
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 }
 

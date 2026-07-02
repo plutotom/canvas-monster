@@ -15,7 +15,9 @@ const VALID = new Set(LANES.map((l) => l.id));
  */
 export async function moveItem(itemKey: string, lane: Lane): Promise<void> {
   if (!db) {
-    throw new Error("No database configured — set DATABASE_URL to persist lanes.");
+    throw new Error(
+      "No database configured — set DATABASE_URL to persist lanes.",
+    );
   }
   if (!VALID.has(lane)) {
     throw new Error(`Invalid lane: ${lane}`);

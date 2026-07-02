@@ -39,16 +39,16 @@ You need an **internal integration token** and your databases shared with it.
 
 **Assignments / Todos** — the important one:
 
-| Property | Type | Use |
-|---|---|---|
-| `Name` | title | Assignment name |
-| `Type` | select | Reading / Paper / Exam / Todo |
-| `Status` | select | Not started / Need to start / In progress / Done |
-| `Due Date` | date (range-capable) | Start defaults to 1 week before end |
-| `Areas` | relation → Areas | The class this belongs to |
-| `Requirements` | text | Full verbatim syllabus/assignment instructions |
-| `URL` | url | **Dedup key** — the Canvas assignment `html_url` |
-| `Tag`, `Books`, `📓 All Notes`, `Blocked by`/`Blocking` | relation | Untouched by sync |
+| Property                                                | Type                 | Use                                              |
+| ------------------------------------------------------- | -------------------- | ------------------------------------------------ |
+| `Name`                                                  | title                | Assignment name                                  |
+| `Type`                                                  | select               | Reading / Paper / Exam / Todo                    |
+| `Status`                                                | select               | Not started / Need to start / In progress / Done |
+| `Due Date`                                              | date (range-capable) | Start defaults to 1 week before end              |
+| `Areas`                                                 | relation → Areas     | The class this belongs to                        |
+| `Requirements`                                          | text                 | Full verbatim syllabus/assignment instructions   |
+| `URL`                                                   | url                  | **Dedup key** — the Canvas assignment `html_url` |
+| `Tag`, `Books`, `📓 All Notes`, `Blocked by`/`Blocking` | relation             | Untouched by sync                                |
 
 **Areas** — one page per class (e.g. `Family Theory and Therapy (PSYC-738-1HY)`).
 The relation backbone. We map Canvas courses → Area pages.

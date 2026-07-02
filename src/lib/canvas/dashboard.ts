@@ -71,9 +71,7 @@ export async function getDashboard(now = new Date()): Promise<DashboardData> {
     }),
   );
 
-  const items = perCourse
-    .flat()
-    .sort((a, b) => a.dueAt.localeCompare(b.dueAt));
+  const items = perCourse.flat().sort((a, b) => a.dueAt.localeCompare(b.dueAt));
 
   return {
     generatedAt: now.toISOString(),

@@ -10,7 +10,9 @@ interface Toast {
   tone: Tone;
 }
 
-const ToastContext = createContext<(msg: string, tone?: Tone) => void>(() => {});
+const ToastContext = createContext<(msg: string, tone?: Tone) => void>(
+  () => {},
+);
 
 /** Fire a transient toast. Safe to call from any client component under AppShell. */
 export function useToast() {
@@ -35,8 +37,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             className="cm-row pointer-events-auto flex items-center gap-2 rounded-lg border border-line-strong bg-elevated px-3 py-2 text-[12px] shadow-2xl"
           >
-            {t.tone === "success" && <Check size={14} style={{ color: "var(--cm-green)" }} />}
-            {t.tone === "error" && <TriangleAlert size={14} style={{ color: "var(--cm-red)" }} />}
+            {t.tone === "success" && (
+              <Check size={14} style={{ color: "var(--cm-green)" }} />
+            )}
+            {t.tone === "error" && (
+              <TriangleAlert size={14} style={{ color: "var(--cm-red)" }} />
+            )}
             <span>{t.msg}</span>
           </div>
         ))}

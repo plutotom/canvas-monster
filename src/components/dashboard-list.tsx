@@ -60,10 +60,16 @@ export function DashboardList({
               <div className="sticky top-0 z-10 bg-background py-1">
                 <div className="mx-2 flex items-center gap-1.5 rounded-md bg-band px-2 py-1.5">
                   <button
-                    onClick={() => setCollapsed((s) => ({ ...s, [bucket]: !s[bucket] }))}
+                    onClick={() =>
+                      setCollapsed((s) => ({ ...s, [bucket]: !s[bucket] }))
+                    }
                     className="grid place-items-center text-faint"
                   >
-                    {isCol ? <ChevronRight size={13} /> : <ChevronDown size={13} />}
+                    {isCol ? (
+                      <ChevronRight size={13} />
+                    ) : (
+                      <ChevronDown size={13} />
+                    )}
                   </button>
                   <StatusIcon status="todo" color={BUCKET_COLOR[bucket]} />
                   <span className="font-medium">{bucket}</span>
@@ -129,7 +135,9 @@ function Row({
       className="cm-row group mx-2 flex min-w-0 cursor-pointer items-center gap-2.5 rounded-lg py-[7px] pr-3 pl-7 hover:bg-elevated aria-selected:bg-accent-soft"
       aria-selected={selected}
       style={{
-        boxShadow: selected ? "inset 0 0 0 1px color-mix(in oklch, var(--cm-accent), transparent 66%)" : undefined,
+        boxShadow: selected
+          ? "inset 0 0 0 1px color-mix(in oklch, var(--cm-accent), transparent 66%)"
+          : undefined,
         animationDelay: `${i * 26}ms`,
       }}
     >

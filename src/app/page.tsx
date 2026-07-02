@@ -33,7 +33,10 @@ export default async function Home() {
           🎉 Nothing due. You&apos;re all caught up.
         </p>
       ) : (
-        <DashboardList items={data?.items ?? []} generatedAt={data?.generatedAt ?? new Date().toISOString()} />
+        <DashboardList
+          items={data?.items ?? []}
+          generatedAt={data?.generatedAt ?? new Date().toISOString()}
+        />
       )}
     </div>
   );

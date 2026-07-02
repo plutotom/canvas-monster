@@ -2,7 +2,7 @@
 
 **The canonical, living reference for the app's look & feel.** The interactive
 source of truth is the prototype at **`/proto`** (`src/app/proto/page.tsx`) —
-when in doubt, open it and match it. This doc explains the *why* and the exact
+when in doubt, open it and match it. This doc explains the _why_ and the exact
 values so any agent can extend the app without drifting from the style.
 
 The aesthetic is **Linear** (linear.app): a dev-first, dark, dense, calm,
@@ -20,45 +20,50 @@ All colors live as CSS variables in `src/app/globals.css` under `:root, .dark`
 hardcode hex in components.
 
 ### Surfaces (darkest → lightest — depth comes from subtle bg shifts, NOT shadows)
-| Token | Hex | Use |
-|---|---|---|
-| `--cm-sidebar` | `#0f1113` | Sidebar chrome (a hair darker than content) |
-| `--cm-app` (`--background`) | `#131416` | Main content background — the "soft" base everything sits on |
-| `--cm-panel` | `#0e0f11` | Recessed wells (search box, inputs) |
-| `--cm-column` | `#17181b` | Board column surface — lifted just enough to show bounds |
-| `--cm-card` (`--card`) | `#1c1d20` | Board cards — a shade above the column |
-| `--cm-elevated` | `#1a1b1e` | Hover surface for rows / nav items / menus |
-| `--cm-band` | `rgba(255,255,255,.025)` | Faint fill behind list group headers |
+
+| Token                       | Hex                      | Use                                                          |
+| --------------------------- | ------------------------ | ------------------------------------------------------------ |
+| `--cm-sidebar`              | `#0f1113`                | Sidebar chrome (a hair darker than content)                  |
+| `--cm-app` (`--background`) | `#131416`                | Main content background — the "soft" base everything sits on |
+| `--cm-panel`                | `#0e0f11`                | Recessed wells (search box, inputs)                          |
+| `--cm-column`               | `#17181b`                | Board column surface — lifted just enough to show bounds     |
+| `--cm-card` (`--card`)      | `#1c1d20`                | Board cards — a shade above the column                       |
+| `--cm-elevated`             | `#1a1b1e`                | Hover surface for rows / nav items / menus                   |
+| `--cm-band`                 | `rgba(255,255,255,.025)` | Faint fill behind list group headers                         |
 
 ### Lines
-| Token | Value | Use |
-|---|---|---|
-| `--cm-line` (`--border`) | `rgba(255,255,255,.06)` | Default hairline border/divider |
+
+| Token                          | Value                   | Use                                  |
+| ------------------------------ | ----------------------- | ------------------------------------ |
+| `--cm-line` (`--border`)       | `rgba(255,255,255,.06)` | Default hairline border/divider      |
 | `--cm-line-strong` (`--input`) | `rgba(255,255,255,.10)` | Emphasis borders, checkboxes, inputs |
 
 ### Text
-| Token | Hex | Use |
-|---|---|---|
-| `--cm-text` (`--foreground`) | `#eceef1` | Primary text, titles (bright, high-contrast) |
-| `--cm-muted` (`--muted-foreground`) | `#8a8f98` | Secondary text, meta, dates |
-| `--cm-faint` | `#6b7079` | Tertiary — IDs, icons at rest, counts, placeholders |
+
+| Token                               | Hex       | Use                                                 |
+| ----------------------------------- | --------- | --------------------------------------------------- |
+| `--cm-text` (`--foreground`)        | `#eceef1` | Primary text, titles (bright, high-contrast)        |
+| `--cm-muted` (`--muted-foreground`) | `#8a8f98` | Secondary text, meta, dates                         |
+| `--cm-faint`                        | `#6b7079` | Tertiary — IDs, icons at rest, counts, placeholders |
 
 ### Accent (use sparingly — one accent, that's the point)
-| Token | Value | Use |
-|---|---|---|
-| `--cm-accent` (`--primary`, `--ring`) | `#5e6ad2` | Brand indigo — primary buttons, focus rings, active nav, progress |
-| `--cm-accent-hover` | `#6872e5` | Accent hover |
-| `--cm-accent-soft` | `rgba(94,106,210,.12)` | Selected-row / active-nav background |
+
+| Token                                 | Value                  | Use                                                               |
+| ------------------------------------- | ---------------------- | ----------------------------------------------------------------- |
+| `--cm-accent` (`--primary`, `--ring`) | `#5e6ad2`              | Brand indigo — primary buttons, focus rings, active nav, progress |
+| `--cm-accent-hover`                   | `#6872e5`              | Accent hover                                                      |
+| `--cm-accent-soft`                    | `rgba(94,106,210,.12)` | Selected-row / active-nav background                              |
 
 ### Semantic (status, priority, labels, course dots)
-| Token | Hex | Meaning |
-|---|---|---|
-| `--cm-red` (`--destructive`) | `#eb5757` | Overdue, urgent, exam, delete |
-| `--cm-orange` | `#fc7840` | High priority |
-| `--cm-amber` | `#e2b53d` | In-progress status, "this week" |
-| `--cm-green` | `#4cb782` | Done, todo/discussion labels |
-| `--cm-blue` | `#4aa3df` | Reading label |
-| `--cm-purple` | `#a06bf5` | Paper label |
+
+| Token                        | Hex       | Meaning                         |
+| ---------------------------- | --------- | ------------------------------- |
+| `--cm-red` (`--destructive`) | `#eb5757` | Overdue, urgent, exam, delete   |
+| `--cm-orange`                | `#fc7840` | High priority                   |
+| `--cm-amber`                 | `#e2b53d` | In-progress status, "this week" |
+| `--cm-green`                 | `#4cb782` | Done, todo/discussion labels    |
+| `--cm-blue`                  | `#4aa3df` | Reading label                   |
+| `--cm-purple`                | `#a06bf5` | Paper label                     |
 
 Tailwind utility aliases exist for the custom surfaces: `bg-app`, `bg-panel`,
 `bg-elevated`, `bg-column`, `bg-band`, `bg-accent-soft`, `text-faint`,
@@ -115,6 +120,7 @@ Extracted as reusable primitives in `src/components/ui/`:
   dashed empty circle when unassigned.
 
 ### Layout anatomy
+
 - **Sidebar** (`w-236px`, collapsible, animated width): workspace switcher,
   search stub with `⌘K` kbd, primary nav (icon + label, active item uses
   `bg-accent-soft` + accent icon), a `COURSES` section (colored dot + name),
@@ -148,6 +154,7 @@ Extracted as reusable primitives in `src/components/ui/`:
 - Everything should feel **instant** and keyboard-reachable.
 
 ### Global interaction layer
+
 - **⌘K command palette** (`command-palette.tsx`) — fuzzy search over views,
   every course, and actions (Refresh). Arrow/Enter/Esc navigation, hover syncs
   the active row. Opened by `⌘K`, the sidebar search field, or the header `⌘K`
@@ -171,17 +178,17 @@ Extracted as reusable primitives in `src/components/ui/`:
 
 Where the system lives, so you extend the right file:
 
-| Concern | File |
-|---|---|
-| Frozen visual reference (dummy data) | `src/app/proto/page.tsx` |
-| Tokens (`--cm-*`), shadcn mapping, `.cm-row`, focus | `src/app/globals.css` |
-| App frame: sidebar + header + mobile drawer | `src/components/app-shell.tsx` |
-| Command palette + `g`-shortcuts | `src/components/command-palette.tsx` |
-| Toasts | `src/components/toast.tsx` |
-| Primitives | `src/components/ui/{priority-icon,status-icon,pill,progress-ring,avatar,skeleton}.tsx` |
-| List view (multi-select + bulk bar) | `src/components/dashboard-list.tsx` |
-| Board view | `src/app/kanban/board.tsx` |
-| Date / bucket / priority helpers | `src/lib/dates.ts` |
+| Concern                                             | File                                                                                   |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Frozen visual reference (dummy data)                | `src/app/proto/page.tsx`                                                               |
+| Tokens (`--cm-*`), shadcn mapping, `.cm-row`, focus | `src/app/globals.css`                                                                  |
+| App frame: sidebar + header + mobile drawer         | `src/components/app-shell.tsx`                                                         |
+| Command palette + `g`-shortcuts                     | `src/components/command-palette.tsx`                                                   |
+| Toasts                                              | `src/components/toast.tsx`                                                             |
+| Primitives                                          | `src/components/ui/{priority-icon,status-icon,pill,progress-ring,avatar,skeleton}.tsx` |
+| List view (multi-select + bulk bar)                 | `src/components/dashboard-list.tsx`                                                    |
+| Board view                                          | `src/app/kanban/board.tsx`                                                             |
+| Date / bucket / priority helpers                    | `src/lib/dates.ts`                                                                     |
 
 ---
 

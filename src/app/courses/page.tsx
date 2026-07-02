@@ -7,7 +7,14 @@ import type { CanvasCourse } from "@/lib/canvas/types";
 
 export const dynamic = "force-dynamic";
 
-const COURSE_COLORS = ["#8b7cf6", "#4aa3df", "#2fbf9f", "#e2b53d", "#eb5757", "#a06bf5"];
+const COURSE_COLORS = [
+  "#8b7cf6",
+  "#4aa3df",
+  "#2fbf9f",
+  "#e2b53d",
+  "#eb5757",
+  "#a06bf5",
+];
 const courseColor = (id: number) => COURSE_COLORS[id % COURSE_COLORS.length];
 
 export default async function CoursesPage() {
@@ -45,8 +52,13 @@ export default async function CoursesPage() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[13px] font-medium">{c.name}</p>
               </div>
-              <span className="font-mono text-[11px] text-faint">{c.course_code}</span>
-              <ChevronRight size={15} className="text-faint opacity-0 transition-opacity group-hover:opacity-100" />
+              <span className="font-mono text-[11px] text-faint">
+                {c.course_code}
+              </span>
+              <ChevronRight
+                size={15}
+                className="text-faint opacity-0 transition-opacity group-hover:opacity-100"
+              />
             </Link>
           ))}
         </div>

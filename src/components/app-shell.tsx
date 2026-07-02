@@ -35,7 +35,14 @@ const NAV = [
 ];
 
 // Stable per-course dot color (hash the id into the semantic palette).
-const COURSE_COLORS = ["#8b7cf6", "#4aa3df", "#2fbf9f", "#e2b53d", "#eb5757", "#a06bf5"];
+const COURSE_COLORS = [
+  "#8b7cf6",
+  "#4aa3df",
+  "#2fbf9f",
+  "#e2b53d",
+  "#eb5757",
+  "#a06bf5",
+];
 const courseColor = (id: number) => COURSE_COLORS[id % COURSE_COLORS.length];
 
 const CRUMBS: { match: (p: string) => boolean; label: string }[] = [
@@ -57,75 +64,80 @@ export function AppShell({
   const [open, setOpen] = useState(true);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const pathname = usePathname();
-  const crumb = CRUMBS.find((c) => c.match(pathname))?.label ?? "canvas-monster";
+  const crumb =
+    CRUMBS.find((c) => c.match(pathname))?.label ?? "canvas-monster";
 
   return (
     <ToastProvider>
-    <CommandPalette courses={courses} open={paletteOpen} onOpenChange={setPaletteOpen} />
-    <div className="flex h-dvh overflow-hidden bg-background text-foreground">
-      {/* mobile backdrop */}
-      <div
-        className={cn(
-          "fixed inset-0 z-40 bg-black/50 md:hidden",
-          open ? "block" : "hidden",
-        )}
-        onClick={() => setOpen(false)}
+      <CommandPalette
+        courses={courses}
+        open={paletteOpen}
+        onOpenChange={setPaletteOpen}
       />
-
-      {/* sidebar (animated width; overlays on mobile) */}
-      <div
-        className={cn(
-          "z-50 shrink-0 overflow-hidden transition-[width] duration-200 ease-out",
-          "max-md:fixed max-md:inset-y-0 max-md:left-0",
-        )}
-        style={{ width: open ? 236 : 0 }}
-      >
-        <Sidebar
-          courses={courses}
-          pathname={pathname}
-          onCollapse={() => setOpen(false)}
-          onSearch={() => setPaletteOpen(true)}
+      <div className="flex h-dvh overflow-hidden bg-background text-foreground">
+        {/* mobile backdrop */}
+        <div
+          className={cn(
+            "fixed inset-0 z-40 bg-black/50 md:hidden",
+            open ? "block" : "hidden",
+          )}
+          onClick={() => setOpen(false)}
         />
-      </div>
 
-      {/* main */}
-      <main className="relative flex min-w-0 flex-1 flex-col">
-        <header className="flex h-11 shrink-0 items-center gap-3 border-b border-line px-4">
-          <button
-            onClick={() => setOpen((v) => !v)}
-            title="Toggle sidebar"
-            className={cn(
-              "-ml-1 grid h-7 w-7 place-items-center rounded-md text-muted-foreground hover:bg-elevated",
-              open && "md:hidden",
-            )}
-          >
-            <PanelLeft size={16} />
-          </button>
-          <span className="text-[13px] font-medium">{crumb}</span>
+        {/* sidebar (animated width; overlays on mobile) */}
+        <div
+          className={cn(
+            "z-50 shrink-0 overflow-hidden transition-[width] duration-200 ease-out",
+            "max-md:fixed max-md:inset-y-0 max-md:left-0",
+          )}
+          style={{ width: open ? 236 : 0 }}
+        >
+          <Sidebar
+            courses={courses}
+            pathname={pathname}
+            onCollapse={() => setOpen(false)}
+            onSearch={() => setPaletteOpen(true)}
+          />
+        </div>
 
-          <button
-            onClick={() => setPaletteOpen(true)}
-            title="Command palette"
-            className="ml-auto flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[12px] text-muted-foreground hover:border-line-strong hover:text-foreground"
-          >
-            <Search size={13} />
-            <kbd className="font-mono text-[10px] text-faint">⌘K</kbd>
-          </button>
-
-          <form action={refreshCanvas}>
+        {/* main */}
+        <main className="relative flex min-w-0 flex-1 flex-col">
+          <header className="flex h-11 shrink-0 items-center gap-3 border-b border-line px-4">
             <button
-              type="submit"
-              title="Re-fetch all Canvas data now"
-              className="flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[12px] text-muted-foreground hover:border-line-strong hover:text-foreground"
+              onClick={() => setOpen((v) => !v)}
+              title="Toggle sidebar"
+              className={cn(
+                "-ml-1 grid h-7 w-7 place-items-center rounded-md text-muted-foreground hover:bg-elevated",
+                open && "md:hidden",
+              )}
             >
-              <RefreshCw size={13} /> Refresh
+              <PanelLeft size={16} />
             </button>
-          </form>
-        </header>
+            <span className="text-[13px] font-medium">{crumb}</span>
 
-        <div className="min-h-0 flex-1 overflow-auto">{children}</div>
-      </main>
-    </div>
+            <button
+              onClick={() => setPaletteOpen(true)}
+              title="Command palette"
+              className="ml-auto flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[12px] text-muted-foreground hover:border-line-strong hover:text-foreground"
+            >
+              <Search size={13} />
+              <kbd className="font-mono text-[10px] text-faint">⌘K</kbd>
+            </button>
+
+            <form action={refreshCanvas}>
+              <button
+                type="submit"
+                title="Re-fetch all Canvas data now"
+                className="flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[12px] text-muted-foreground hover:border-line-strong hover:text-foreground"
+              >
+                <RefreshCw size={13} /> Refresh
+              </button>
+            </form>
+          </header>
+
+          <div className="min-h-0 flex-1 overflow-auto">{children}</div>
+        </main>
+      </div>
     </ToastProvider>
   );
 }
@@ -150,7 +162,9 @@ function Sidebar({
       <div className="group/ws flex items-center gap-2 px-3 py-3">
         <div
           className="grid h-6 w-6 place-items-center rounded-md text-[11px] font-bold text-white"
-          style={{ background: "linear-gradient(140deg,var(--cm-accent),#8b7cf6)" }}
+          style={{
+            background: "linear-gradient(140deg,var(--cm-accent),#8b7cf6)",
+          }}
         >
           C
         </div>
@@ -182,17 +196,23 @@ function Sidebar({
       {/* primary nav */}
       <nav className="px-2">
         {NAV.map((n) => {
-          const active = n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
+          const active =
+            n.href === "/" ? pathname === "/" : pathname.startsWith(n.href);
           return (
             <Link
               key={n.href}
               href={n.href}
               className={cn(
                 "mb-0.5 flex items-center gap-2.5 rounded-md px-2 py-1.5",
-                active ? "bg-accent-soft text-foreground" : "text-muted-foreground hover:bg-elevated",
+                active
+                  ? "bg-accent-soft text-foreground"
+                  : "text-muted-foreground hover:bg-elevated",
               )}
             >
-              <n.icon size={16} className={active ? "text-brand" : "text-faint"} />
+              <n.icon
+                size={16}
+                className={active ? "text-brand" : "text-faint"}
+              />
               <span className="font-medium">{n.label}</span>
             </Link>
           );
@@ -208,7 +228,9 @@ function Sidebar({
       </div>
       <nav className="min-h-0 flex-1 overflow-y-auto px-2">
         {courses.length === 0 && (
-          <p className="px-2 py-1.5 text-[12px] text-faint">No active courses</p>
+          <p className="px-2 py-1.5 text-[12px] text-faint">
+            No active courses
+          </p>
         )}
         {courses.map((c) => {
           const active = pathname === `/courses/${c.id}`;
@@ -219,7 +241,9 @@ function Sidebar({
               title={c.name}
               className={cn(
                 "flex items-center gap-2.5 rounded-md px-2 py-1.5",
-                active ? "bg-accent-soft text-foreground" : "text-muted-foreground hover:bg-elevated",
+                active
+                  ? "bg-accent-soft text-foreground"
+                  : "text-muted-foreground hover:bg-elevated",
               )}
             >
               <Dot color={courseColor(c.id)} className="h-2 w-2" />

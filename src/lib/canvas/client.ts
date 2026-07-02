@@ -148,9 +148,7 @@ export const CANVAS_CACHE_TAG = "canvas";
 
 export const getActiveCourses = unstable_cache(
   (): Promise<CanvasCourse[]> =>
-    canvasGetAll<CanvasCourse>(
-      "/courses?enrollment_state=active&per_page=100",
-    ),
+    canvasGetAll<CanvasCourse>("/courses?enrollment_state=active&per_page=100"),
   ["canvas:active-courses"],
   { revalidate: CANVAS_TTL.courses, tags: [CANVAS_CACHE_TAG, "courses"] },
 );
@@ -213,14 +211,15 @@ export async function testConnection(): Promise<{
   status?: number;
 }> {
   try {
-    const user = await canvasGet<{ id: number; name: string }>(
-      "/users/self",
-    );
+    const user = await canvasGet<{ id: number; name: string }>("/users/self");
     return { ok: true, user };
   } catch (err) {
     if (err instanceof CanvasError) {
       return { ok: false, error: err.message, status: err.status };
     }
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
   }
 }

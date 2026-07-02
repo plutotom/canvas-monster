@@ -64,13 +64,82 @@ const L = {
 };
 
 const ROWS: Row[] = [
-  { id: "CM-142", title: "Read Bowen ch. 4 — differentiation of self", status: "progress", priority: 3, progress: [2, 3], labels: [L.reading], course: "PSYC-738", assignee: "IP", due: "Jun 30", group: "Overdue" },
-  { id: "CM-139", title: "Response paper: family systems case study", status: "todo", priority: 3, labels: [L.paper], course: "PSYC-738", assignee: "IP", due: "Jul 1", group: "Overdue" },
-  { id: "CM-155", title: "Watch lecture: Trinity & personhood", status: "todo", priority: 2, labels: [L.video], course: "THEO-501", due: "Wed", group: "This week" },
-  { id: "CM-158", title: "Exegesis draft — Romans 8:1–17", parent: "Final exegetical paper", status: "progress", priority: 3, progress: [1, 4], labels: [L.paper], course: "BIBL-612", assignee: "IP", due: "Thu", group: "This week" },
-  { id: "CM-160", title: "Discussion post: imago Dei readings", status: "todo", priority: 0, labels: [L.discussion, L.todo], course: "THEO-501", due: "Fri", group: "This week" },
-  { id: "CM-171", title: "Midterm exam — pastoral counseling", status: "todo", priority: 3, labels: [L.exam], course: "PSYC-738", due: "Jul 21", group: "Later" },
-  { id: "CM-176", title: "Read Wright — Paul and the faithfulness of God", status: "todo", priority: 1, labels: [L.reading], course: "BIBL-612", due: "Jul 24", group: "Later" },
+  {
+    id: "CM-142",
+    title: "Read Bowen ch. 4 — differentiation of self",
+    status: "progress",
+    priority: 3,
+    progress: [2, 3],
+    labels: [L.reading],
+    course: "PSYC-738",
+    assignee: "IP",
+    due: "Jun 30",
+    group: "Overdue",
+  },
+  {
+    id: "CM-139",
+    title: "Response paper: family systems case study",
+    status: "todo",
+    priority: 3,
+    labels: [L.paper],
+    course: "PSYC-738",
+    assignee: "IP",
+    due: "Jul 1",
+    group: "Overdue",
+  },
+  {
+    id: "CM-155",
+    title: "Watch lecture: Trinity & personhood",
+    status: "todo",
+    priority: 2,
+    labels: [L.video],
+    course: "THEO-501",
+    due: "Wed",
+    group: "This week",
+  },
+  {
+    id: "CM-158",
+    title: "Exegesis draft — Romans 8:1–17",
+    parent: "Final exegetical paper",
+    status: "progress",
+    priority: 3,
+    progress: [1, 4],
+    labels: [L.paper],
+    course: "BIBL-612",
+    assignee: "IP",
+    due: "Thu",
+    group: "This week",
+  },
+  {
+    id: "CM-160",
+    title: "Discussion post: imago Dei readings",
+    status: "todo",
+    priority: 0,
+    labels: [L.discussion, L.todo],
+    course: "THEO-501",
+    due: "Fri",
+    group: "This week",
+  },
+  {
+    id: "CM-171",
+    title: "Midterm exam — pastoral counseling",
+    status: "todo",
+    priority: 3,
+    labels: [L.exam],
+    course: "PSYC-738",
+    due: "Jul 21",
+    group: "Later",
+  },
+  {
+    id: "CM-176",
+    title: "Read Wright — Paul and the faithfulness of God",
+    status: "todo",
+    priority: 1,
+    labels: [L.reading],
+    course: "BIBL-612",
+    due: "Jul 24",
+    group: "Later",
+  },
 ];
 
 const GROUPS = [
@@ -109,7 +178,11 @@ export default function Proto() {
   return (
     <div
       className="fixed inset-0 z-50 flex text-[13px]"
-      style={{ background: C.bg, color: C.text, fontFamily: "var(--font-geist-sans)" }}
+      style={{
+        background: C.bg,
+        color: C.text,
+        fontFamily: "var(--font-geist-sans)",
+      }}
     >
       <style>{`
         @keyframes protoUp { from { opacity:0; transform:translateY(3px) } to { opacity:1; transform:none } }
@@ -127,12 +200,17 @@ export default function Proto() {
       >
         <aside
           className="flex h-full w-[236px] flex-col"
-          style={{ background: C.sidebar, borderRight: `1px solid ${C.border}` }}
+          style={{
+            background: C.sidebar,
+            borderRight: `1px solid ${C.border}`,
+          }}
         >
           <div className="group/ws flex items-center gap-2 px-3 py-3">
             <div
               className="grid h-6 w-6 place-items-center rounded-md text-[11px] font-bold text-white"
-              style={{ background: `linear-gradient(140deg,${C.accent},#8b7cf6)` }}
+              style={{
+                background: `linear-gradient(140deg,${C.accent},#8b7cf6)`,
+              }}
             >
               C
             </div>
@@ -148,61 +226,82 @@ export default function Proto() {
             </button>
           </div>
 
-        <div className="px-2 pb-2">
-          <button
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-            style={{ background: C.panel, color: C.muted, border: `1px solid ${C.border}` }}
-          >
-            <Search size={14} />
-            <span className="flex-1">Search</span>
-            <kbd
-              className="rounded px-1.5 py-0.5 text-[10px]"
-              style={{ background: C.bg, color: C.faint, fontFamily: "var(--font-geist-mono)" }}
-            >
-              ⌘K
-            </kbd>
-          </button>
-        </div>
-
-        <nav className="px-2">
-          {NAV.map((n) => (
-            <a
-              key={n.label}
-              className="proto-hover mb-0.5 flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5"
+          <div className="px-2 pb-2">
+            <button
+              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
               style={{
-                background: n.active ? C.accentSoft : "transparent",
-                color: n.active ? C.text : C.muted,
+                background: C.panel,
+                color: C.muted,
+                border: `1px solid ${C.border}`,
               }}
             >
-              <n.icon size={16} style={{ color: n.active ? C.accent : C.faint }} />
-              <span className="flex-1 font-medium">{n.label}</span>
-              {n.count && (
-                <span className="text-[11px]" style={{ color: C.faint }}>
-                  {n.count}
-                </span>
-              )}
-            </a>
-          ))}
-        </nav>
+              <Search size={14} />
+              <span className="flex-1">Search</span>
+              <kbd
+                className="rounded px-1.5 py-0.5 text-[10px]"
+                style={{
+                  background: C.bg,
+                  color: C.faint,
+                  fontFamily: "var(--font-geist-mono)",
+                }}
+              >
+                ⌘K
+              </kbd>
+            </button>
+          </div>
 
-        <div className="mt-4 flex items-center justify-between px-3 pb-1">
-          <span className="text-[11px] font-medium uppercase tracking-wider" style={{ color: C.faint }}>
-            Courses
-          </span>
-          <Plus size={13} style={{ color: C.faint }} className="cursor-pointer" />
-        </div>
-        <nav className="px-2">
-          {COURSES.map((c) => (
-            <a
-              key={c.code}
-              className="proto-hover flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5"
-              style={{ color: C.muted }}
+          <nav className="px-2">
+            {NAV.map((n) => (
+              <a
+                key={n.label}
+                className="proto-hover mb-0.5 flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5"
+                style={{
+                  background: n.active ? C.accentSoft : "transparent",
+                  color: n.active ? C.text : C.muted,
+                }}
+              >
+                <n.icon
+                  size={16}
+                  style={{ color: n.active ? C.accent : C.faint }}
+                />
+                <span className="flex-1 font-medium">{n.label}</span>
+                {n.count && (
+                  <span className="text-[11px]" style={{ color: C.faint }}>
+                    {n.count}
+                  </span>
+                )}
+              </a>
+            ))}
+          </nav>
+
+          <div className="mt-4 flex items-center justify-between px-3 pb-1">
+            <span
+              className="text-[11px] font-medium uppercase tracking-wider"
+              style={{ color: C.faint }}
             >
-              <span className="h-2 w-2 rounded-full" style={{ background: c.color }} />
-              <span className="flex-1 truncate">{c.name}</span>
-            </a>
-          ))}
-        </nav>
+              Courses
+            </span>
+            <Plus
+              size={13}
+              style={{ color: C.faint }}
+              className="cursor-pointer"
+            />
+          </div>
+          <nav className="px-2">
+            {COURSES.map((c) => (
+              <a
+                key={c.code}
+                className="proto-hover flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5"
+                style={{ color: C.muted }}
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ background: c.color }}
+                />
+                <span className="flex-1 truncate">{c.name}</span>
+              </a>
+            ))}
+          </nav>
 
           <div className="mt-auto p-2">
             <a
@@ -243,9 +342,20 @@ export default function Proto() {
             >
               <Filter size={13} /> Filter
             </button>
-            <div className="flex items-center rounded-md p-0.5" style={{ border: `1px solid ${C.border}` }}>
-              <Seg icon={LayoutList} active={view === "list"} onClick={() => setView("list")} />
-              <Seg icon={Columns3} active={view === "board"} onClick={() => setView("board")} />
+            <div
+              className="flex items-center rounded-md p-0.5"
+              style={{ border: `1px solid ${C.border}` }}
+            >
+              <Seg
+                icon={LayoutList}
+                active={view === "list"}
+                onClick={() => setView("list")}
+              />
+              <Seg
+                icon={Columns3}
+                active={view === "board"}
+                onClick={() => setView("board")}
+              />
             </div>
           </div>
         </header>
@@ -259,29 +369,48 @@ export default function Proto() {
                 return (
                   <section key={g.id}>
                     {/* group header */}
-                    <div className="sticky top-0 z-10 py-1" style={{ background: C.bg }}>
+                    <div
+                      className="sticky top-0 z-10 py-1"
+                      style={{ background: C.bg }}
+                    >
                       <div
                         className="mx-2 flex items-center gap-1.5 rounded-md px-2 py-1.5"
                         style={{ background: C.band }}
                       >
                         <button
-                          onClick={() => setCollapsed((s) => ({ ...s, [g.id]: !s[g.id] }))}
+                          onClick={() =>
+                            setCollapsed((s) => ({ ...s, [g.id]: !s[g.id] }))
+                          }
                           className="grid place-items-center"
                           style={{ color: C.faint }}
                         >
-                          {isCol ? <ChevronRight size={13} /> : <ChevronDown size={13} />}
+                          {isCol ? (
+                            <ChevronRight size={13} />
+                          ) : (
+                            <ChevronDown size={13} />
+                          )}
                         </button>
                         <StatusIcon status={g.status} color={g.color} />
                         <span className="font-medium" style={{ color: C.text }}>
                           {g.id}
                         </span>
                         <span style={{ color: C.faint }}>{rows.length}</span>
-                        <Plus size={14} className="ml-auto cursor-pointer" style={{ color: C.faint }} />
+                        <Plus
+                          size={14}
+                          className="ml-auto cursor-pointer"
+                          style={{ color: C.faint }}
+                        />
                       </div>
                     </div>
                     {!isCol &&
                       rows.map((r, i) => (
-                        <RowItem key={r.id} r={r} i={i} selected={sel.has(r.id)} onClick={() => toggle(r.id)} />
+                        <RowItem
+                          key={r.id}
+                          r={r}
+                          i={i}
+                          selected={sel.has(r.id)}
+                          onClick={() => toggle(r.id)}
+                        />
                       ))}
                   </section>
                 );
@@ -297,7 +426,10 @@ export default function Proto() {
           <div className="pointer-events-none absolute inset-x-0 bottom-5 flex justify-center">
             <div
               className="proto-row pointer-events-auto flex items-center gap-1 rounded-xl p-1 pl-3 shadow-2xl"
-              style={{ background: C.elev, border: `1px solid ${C.borderStrong}` }}
+              style={{
+                background: C.elev,
+                border: `1px solid ${C.borderStrong}`,
+              }}
             >
               <span className="pr-2 text-[12px]" style={{ color: C.muted }}>
                 <b style={{ color: C.text }}>{sel.size}</b> selected
@@ -338,21 +470,44 @@ function BulkBtn({
   );
 }
 
-function StatusDoneMini({ size = 14 }: { size?: number; style?: React.CSSProperties }) {
+function StatusDoneMini({
+  size = 14,
+}: {
+  size?: number;
+  style?: React.CSSProperties;
+}) {
   return (
     <svg width={size} height={size} viewBox="0 0 16 16">
       <circle cx="8" cy="8" r="6.5" fill="#4cb782" />
-      <path d="M5 8 l2 2 l4-4.2" fill="none" stroke={C.elev} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M5 8 l2 2 l4-4.2"
+        fill="none"
+        stroke={C.elev}
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
 
-function Seg({ icon: Icon, active, onClick }: { icon: typeof LayoutList; active: boolean; onClick: () => void }) {
+function Seg({
+  icon: Icon,
+  active,
+  onClick,
+}: {
+  icon: typeof LayoutList;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
     <button
       onClick={onClick}
       className="grid h-6 w-7 place-items-center rounded"
-      style={{ background: active ? C.elev : "transparent", color: active ? C.text : C.faint }}
+      style={{
+        background: active ? C.elev : "transparent",
+        color: active ? C.text : C.faint,
+      }}
     >
       <Icon size={14} />
     </button>
@@ -383,17 +538,37 @@ function PriorityIcon({ level }: { level: 0 | 1 | 2 | 3 }) {
 
 // Linear-style status circle: empty / half / check.
 function StatusIcon({ status, color }: { status: Status; color?: string }) {
-  const stroke = color ?? (status === "done" ? "#4cb782" : status === "progress" ? "#e2b53d" : C.faint);
+  const stroke =
+    color ??
+    (status === "done"
+      ? "#4cb782"
+      : status === "progress"
+        ? "#e2b53d"
+        : C.faint);
   return (
     <svg width="15" height="15" viewBox="0 0 16 16" className="shrink-0">
-      <circle cx="8" cy="8" r="6.5" fill="none" stroke={stroke} strokeWidth="1.5" />
+      <circle
+        cx="8"
+        cy="8"
+        r="6.5"
+        fill="none"
+        stroke={stroke}
+        strokeWidth="1.5"
+      />
       {status === "progress" && (
         <path d="M8 8 L8 2 A6 6 0 0 1 8 14 Z" fill={stroke} />
       )}
       {status === "done" && (
         <>
           <circle cx="8" cy="8" r="6.5" fill={stroke} />
-          <path d="M5 8 l2 2 l4-4.2" fill="none" stroke="#0e0f11" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M5 8 l2 2 l4-4.2"
+            fill="none"
+            stroke="#0e0f11"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </>
       )}
     </svg>
@@ -404,14 +579,28 @@ function Pill({ children }: { children: React.ReactNode }) {
   return (
     <span
       className="flex shrink-0 items-center gap-1.5 rounded-full px-2 py-[3px] text-[11.5px]"
-      style={{ border: `1px solid ${C.border}`, background: "rgba(255,255,255,0.02)", color: C.muted }}
+      style={{
+        border: `1px solid ${C.border}`,
+        background: "rgba(255,255,255,0.02)",
+        color: C.muted,
+      }}
     >
       {children}
     </span>
   );
 }
 
-function RowItem({ r, i, selected, onClick }: { r: Row; i: number; selected: boolean; onClick: () => void }) {
+function RowItem({
+  r,
+  i,
+  selected,
+  onClick,
+}: {
+  r: Row;
+  i: number;
+  selected: boolean;
+  onClick: () => void;
+}) {
   return (
     <div
       onClick={onClick}
@@ -423,15 +612,25 @@ function RowItem({ r, i, selected, onClick }: { r: Row; i: number; selected: boo
       }}
     >
       <PriorityIcon level={r.priority} />
-      <span className="w-[52px] shrink-0 text-[12px]" style={{ color: C.faint, fontFamily: "var(--font-geist-mono)" }}>
+      <span
+        className="w-[52px] shrink-0 text-[12px]"
+        style={{ color: C.faint, fontFamily: "var(--font-geist-mono)" }}
+      >
         {r.id}
       </span>
       <StatusIcon status={r.status} />
-      <span className="min-w-0 flex-1 truncate font-medium" style={{ color: C.text }} title={r.title}>
+      <span
+        className="min-w-0 flex-1 truncate font-medium"
+        style={{ color: C.text }}
+        title={r.title}
+      >
         {r.title}
       </span>
       {r.parent && (
-        <span className="hidden min-w-0 items-center gap-1.5 lg:flex" style={{ color: C.faint }}>
+        <span
+          className="hidden min-w-0 items-center gap-1.5 lg:flex"
+          style={{ color: C.faint }}
+        >
           <ChevronRight size={12} />
           <span className="truncate">{r.parent}</span>
         </span>
@@ -447,7 +646,10 @@ function RowItem({ r, i, selected, onClick }: { r: Row; i: number; selected: boo
         <div className="hidden items-center gap-1.5 md:flex">
           {r.labels.map((l) => (
             <Pill key={l.name}>
-              <span className="h-1.5 w-1.5 rounded-full" style={{ background: l.color }} />
+              <span
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ background: l.color }}
+              />
               {l.name}
             </Pill>
           ))}
@@ -459,7 +661,10 @@ function RowItem({ r, i, selected, onClick }: { r: Row; i: number; selected: boo
           </Pill>
         </span>
         <Avatar initials={r.assignee} />
-        <span className="w-11 shrink-0 text-right text-[12px]" style={{ color: C.muted }}>
+        <span
+          className="w-11 shrink-0 text-right text-[12px]"
+          style={{ color: C.muted }}
+        >
           {r.due}
         </span>
       </div>
@@ -473,7 +678,14 @@ function ProgressRing({ done, total }: { done: number; total: number }) {
   const circ = 2 * Math.PI * r;
   return (
     <svg width="13" height="13" viewBox="0 0 14 14">
-      <circle cx="7" cy="7" r={r} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="2" />
+      <circle
+        cx="7"
+        cy="7"
+        r={r}
+        fill="none"
+        stroke="rgba(255,255,255,0.16)"
+        strokeWidth="2"
+      />
       <circle
         cx="7"
         cy="7"
@@ -519,7 +731,9 @@ function Board() {
   const byLane: Record<string, Row[]> = {
     read: ROWS.filter((r) => r.labels[0]?.name === "Reading"),
     watch: ROWS.filter((r) => r.labels[0]?.name === "Video"),
-    do: ROWS.filter((r) => ["Paper", "Exam", "Discussion"].includes(r.labels[0]?.name)),
+    do: ROWS.filter((r) =>
+      ["Paper", "Exam", "Discussion"].includes(r.labels[0]?.name),
+    ),
     done: [],
   };
   return (
@@ -532,10 +746,16 @@ function Board() {
         >
           {/* column header — borderless, actions on right */}
           <div className="flex items-center gap-2 px-3 py-2.5">
-            <StatusIcon status={l.status} color={l.status === "todo" ? C.faint : undefined} />
+            <StatusIcon
+              status={l.status}
+              color={l.status === "todo" ? C.faint : undefined}
+            />
             <span className="font-medium">{l.label}</span>
             <span style={{ color: C.faint }}>{byLane[l.id].length}</span>
-            <div className="ml-auto flex items-center gap-1" style={{ color: C.faint }}>
+            <div
+              className="ml-auto flex items-center gap-1"
+              style={{ color: C.faint }}
+            >
               <MoreHorizontal size={15} className="cursor-pointer" />
               <Plus size={15} className="cursor-pointer" />
             </div>
@@ -562,15 +782,26 @@ function BoardCard({ r, i }: { r: Row; i: number }) {
   return (
     <div
       className="proto-row proto-card flex min-w-0 cursor-pointer flex-col gap-2 rounded-lg p-3"
-      style={{ background: C.card, border: `1px solid ${C.border}`, animationDelay: `${i * 40}ms`, transition: "background .1s, border-color .1s" }}
+      style={{
+        background: C.card,
+        border: `1px solid ${C.border}`,
+        animationDelay: `${i * 40}ms`,
+        transition: "background .1s, border-color .1s",
+      }}
     >
       {/* id + assignee */}
       <div className="flex items-center gap-2">
-        <span className="text-[12px]" style={{ color: C.faint, fontFamily: "var(--font-geist-mono)" }}>
+        <span
+          className="text-[12px]"
+          style={{ color: C.faint, fontFamily: "var(--font-geist-mono)" }}
+        >
           {r.id}
         </span>
         {r.parent && (
-          <span className="flex min-w-0 items-center gap-1" style={{ color: C.faint }}>
+          <span
+            className="flex min-w-0 items-center gap-1"
+            style={{ color: C.faint }}
+          >
             <ChevronRight size={11} />
             <span className="truncate text-[12px]">{r.parent}</span>
           </span>
@@ -585,7 +816,11 @@ function BoardCard({ r, i }: { r: Row; i: number }) {
         <span className="mt-[2px] shrink-0">
           <StatusIcon status={r.status} />
         </span>
-        <span className="line-clamp-2 min-w-0 flex-1 font-medium leading-snug" style={{ color: C.text }} title={r.title}>
+        <span
+          className="line-clamp-2 min-w-0 flex-1 font-medium leading-snug"
+          style={{ color: C.text }}
+          title={r.title}
+        >
           {r.title}
         </span>
       </div>
@@ -601,7 +836,10 @@ function BoardCard({ r, i }: { r: Row; i: number }) {
         </Pill>
         {r.labels.map((l) => (
           <Pill key={l.name}>
-            <span className="h-1.5 w-1.5 rounded-full" style={{ background: l.color }} />
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ background: l.color }}
+            />
             {l.name}
           </Pill>
         ))}

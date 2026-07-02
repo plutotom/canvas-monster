@@ -68,12 +68,12 @@ browser never talks to Canvas directly, and there are no client-facing API
 routes. Each read in `src/lib/canvas/client.ts` is wrapped in Next's
 `unstable_cache` with a time-based TTL and a shared `"canvas"` tag:
 
-| Data | Revalidate |
-|---|---|
-| Courses | 1 hr |
-| Assignments / modules / announcements | 10 min |
-| Grades | 5 min |
-| To-do / dashboard | 3 min |
+| Data                                  | Revalidate |
+| ------------------------------------- | ---------- |
+| Courses                               | 1 hr       |
+| Assignments / modules / announcements | 10 min     |
+| Grades                                | 5 min      |
+| To-do / dashboard                     | 3 min      |
 
 This protects the Canvas rate limit (~700 req/hr): repeated reloads and
 navigations within the TTL reuse the cached response. Because the cache is keyed

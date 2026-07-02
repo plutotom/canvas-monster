@@ -24,7 +24,13 @@ export function Pill({
 }
 
 /** Small colored dot used inside label pills and course lists. */
-export function Dot({ color, className }: { color: string; className?: string }) {
+export function Dot({
+  color,
+  className,
+}: {
+  color: string;
+  className?: string;
+}) {
   return (
     <span
       className={cn("h-1.5 w-1.5 shrink-0 rounded-full", className)}

@@ -30,16 +30,16 @@ Current workflow: you paste syllabus text into an AI prompt that parses it and c
 
 ## Data model (what we pull from Canvas)
 
-| Entity | Endpoint | Notes |
-|---|---|---|
-| Courses | `GET /courses?enrollment_state=active` | all active courses (v1 scope: everything, no per-course toggle) |
-| Assignments | `GET /courses/:id/assignments` | due dates, points, submission status, description (HTML instructions) |
-| Modules | `GET /courses/:id/modules?include[]=items` | course content structure — where most profs actually dump PDFs/videos/assignments |
-| Announcements | `GET /courses/:id/discussion_topics?only_announcements=true` | |
-| Calendar events | `GET /calendar_events?context_codes[]=course_X` | due dates + events merged |
-| To-do | `GET /users/self/todo` | cross-course todo |
-| Files | `GET /courses/:id/files` | for inline PDF preview |
-| Grades | — | **skipped for v1** |
+| Entity          | Endpoint                                                     | Notes                                                                             |
+| --------------- | ------------------------------------------------------------ | --------------------------------------------------------------------------------- |
+| Courses         | `GET /courses?enrollment_state=active`                       | all active courses (v1 scope: everything, no per-course toggle)                   |
+| Assignments     | `GET /courses/:id/assignments`                               | due dates, points, submission status, description (HTML instructions)             |
+| Modules         | `GET /courses/:id/modules?include[]=items`                   | course content structure — where most profs actually dump PDFs/videos/assignments |
+| Announcements   | `GET /courses/:id/discussion_topics?only_announcements=true` |                                                                                   |
+| Calendar events | `GET /calendar_events?context_codes[]=course_X`              | due dates + events merged                                                         |
+| To-do           | `GET /users/self/todo`                                       | cross-course todo                                                                 |
+| Files           | `GET /courses/:id/files`                                     | for inline PDF preview                                                            |
+| Grades          | —                                                            | **skipped for v1**                                                                |
 
 ## Architecture
 

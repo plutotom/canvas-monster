@@ -28,14 +28,15 @@ export default async function KanbanPage() {
         <div
           className="mx-3 mb-1 rounded-lg border p-3 text-[13px]"
           style={{
-            borderColor: "color-mix(in oklch, var(--cm-amber), transparent 60%)",
+            borderColor:
+              "color-mix(in oklch, var(--cm-amber), transparent 60%)",
             background: "color-mix(in oklch, var(--cm-amber), transparent 90%)",
             color: "color-mix(in oklch, var(--cm-amber), white 45%)",
           }}
         >
           <span className="font-medium">No database connected — </span>
-          lanes show their auto-computed position but moves won&apos;t persist. Set{" "}
-          <code>DATABASE_URL</code> in <code>.env.local</code> and run{" "}
+          lanes show their auto-computed position but moves won&apos;t persist.
+          Set <code>DATABASE_URL</code> in <code>.env.local</code> and run{" "}
           <code>pnpm db:push</code>.
         </div>
       )}

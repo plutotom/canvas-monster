@@ -40,9 +40,7 @@ export async function buildBoard(): Promise<KanbanCard[]> {
           .filter((a) => {
             const s = a.submission?.workflow_state;
             return (
-              a.has_submitted_submissions ||
-              s === "submitted" ||
-              s === "graded"
+              a.has_submitted_submissions || s === "submitted" || s === "graded"
             );
           })
           .map((a) => a.id),

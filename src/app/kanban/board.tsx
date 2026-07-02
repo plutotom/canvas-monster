@@ -36,7 +36,9 @@ export function Board({
     const label = LANES.find((l) => l.id === lane)?.label ?? lane;
 
     const prev = cards;
-    setCards((cs) => cs.map((c) => (c.itemKey === itemKey ? { ...c, lane, manual: true } : c)));
+    setCards((cs) =>
+      cs.map((c) => (c.itemKey === itemKey ? { ...c, lane, manual: true } : c)),
+    );
     setError(null);
 
     if (!persists) return; // no DB — local-only
@@ -86,13 +88,20 @@ export function Board({
               }}
               className="group flex w-[300px] shrink-0 flex-col rounded-xl transition-colors"
               style={{
-                background: overLane === lane.id ? "var(--cm-accent-soft)" : "var(--cm-column)",
+                background:
+                  overLane === lane.id
+                    ? "var(--cm-accent-soft)"
+                    : "var(--cm-column)",
               }}
             >
               <div className="flex items-center gap-2 px-3 py-2.5">
                 <StatusIcon
                   status={LANE_STATUS[lane.id]}
-                  color={LANE_STATUS[lane.id] === "todo" ? "var(--cm-faint)" : undefined}
+                  color={
+                    LANE_STATUS[lane.id] === "todo"
+                      ? "var(--cm-faint)"
+                      : undefined
+                  }
                 />
                 <span className="text-[13px] font-medium">{lane.label}</span>
                 <span className="text-faint">{laneCards.length}</span>
@@ -113,7 +122,9 @@ export function Board({
                   />
                 ))}
                 {laneCards.length === 0 && (
-                  <p className="py-8 text-center text-[11px] text-faint">Empty</p>
+                  <p className="py-8 text-center text-[11px] text-faint">
+                    Empty
+                  </p>
                 )}
               </div>
             </div>

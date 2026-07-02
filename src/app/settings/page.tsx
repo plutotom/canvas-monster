@@ -31,17 +31,24 @@ export default async function SettingsPage() {
               </p>
               <p className="mt-1 text-[13px] text-muted-foreground">
                 Authenticated as{" "}
-                <span className="font-medium text-foreground">{result.user?.name}</span> (id{" "}
-                {result.user?.id}).
+                <span className="font-medium text-foreground">
+                  {result.user?.name}
+                </span>{" "}
+                (id {result.user?.id}).
               </p>
             </>
           ) : (
             <>
               <p className="font-medium" style={{ color: "var(--cm-red)" }}>
                 ● Not connected
-                {"status" in result && result.status ? ` (${result.status})` : ""}
+                {"status" in result && result.status
+                  ? ` (${result.status})`
+                  : ""}
               </p>
-              <p className="mt-1 font-mono text-xs opacity-80" style={{ color: "var(--cm-red)" }}>
+              <p
+                className="mt-1 font-mono text-xs opacity-80"
+                style={{ color: "var(--cm-red)" }}
+              >
                 {result.error}
               </p>
             </>
@@ -71,8 +78,11 @@ export default async function SettingsPage() {
         </p>
         <ol className="list-decimal space-y-1 pl-5 text-[13px] text-muted-foreground">
           <li>
-            In Canvas: <span className="text-foreground">Account → Settings →
-            New Access Token</span>.
+            In Canvas:{" "}
+            <span className="text-foreground">
+              Account → Settings → New Access Token
+            </span>
+            .
           </li>
           <li>
             Add it to <code>.env.local</code> at the project root:
