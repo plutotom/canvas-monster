@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useTransition,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BookOpen,
@@ -19,10 +12,9 @@ import {
   Search,
   Settings,
 } from "lucide-react";
-import { refreshCanvas } from "@/app/actions";
-import { useToast } from "@/components/toast";
 import { Dot } from "@/components/ui/pill";
 import type { ShellCourse } from "@/components/app-shell";
+import { useRefreshCanvas } from "@/hooks/use-refresh-canvas";
 
 interface Command {
   id: string;
@@ -62,8 +54,7 @@ export function CommandPalette({
   onOpenChange: (v: boolean) => void;
 }) {
   const router = useRouter();
-  const toast = useToast();
-  const [, startTransition] = useTransition();
+  const { refresh } = useRefreshCanvas();
   const [q, setQ] = useState("");
   const [active, setActive] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -132,10 +123,7 @@ export function CommandPalette({
         icon: <RefreshCw size={15} />,
         run: () => {
           setOpen(false);
-          startTransition(async () => {
-            await refreshCanvas();
-            toast("Canvas data refreshed", "success");
-          });
+          refresh();
         },
       },
       ...courses.map<Command>((c) => ({
@@ -152,7 +140,7 @@ export function CommandPalette({
         run: go(`/courses/${c.id}`),
       })),
     ];
-  }, [courses, router, setOpen, toast, startTransition]);
+  }, [courses, router, setOpen, refresh]);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();

@@ -15,11 +15,11 @@ import {
   Search,
   Settings,
 } from "lucide-react";
-import { refreshCanvas } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { Dot } from "@/components/ui/pill";
 import { ToastProvider } from "@/components/toast";
 import { CommandPalette } from "@/components/command-palette";
+import { useRefreshCanvas } from "@/hooks/use-refresh-canvas";
 
 export interface ShellCourse {
   id: number;
@@ -69,6 +69,45 @@ export function AppShell({
 
   return (
     <ToastProvider>
+      <AppShellInner
+        courses={courses}
+        open={open}
+        setOpen={setOpen}
+        paletteOpen={paletteOpen}
+        setPaletteOpen={setPaletteOpen}
+        pathname={pathname}
+        crumb={crumb}
+      >
+        {children}
+      </AppShellInner>
+    </ToastProvider>
+  );
+}
+
+/** Inner shell so `useRefreshCanvas` / `useToast` sit under ToastProvider. */
+function AppShellInner({
+  courses,
+  open,
+  setOpen,
+  paletteOpen,
+  setPaletteOpen,
+  pathname,
+  crumb,
+  children,
+}: {
+  courses: ShellCourse[];
+  open: boolean;
+  setOpen: (v: boolean | ((prev: boolean) => boolean)) => void;
+  paletteOpen: boolean;
+  setPaletteOpen: (v: boolean) => void;
+  pathname: string;
+  crumb: string;
+  children: React.ReactNode;
+}) {
+  const { refresh, pending } = useRefreshCanvas();
+
+  return (
+    <>
       <CommandPalette
         courses={courses}
         open={paletteOpen}
@@ -124,21 +163,25 @@ export function AppShell({
               <kbd className="font-mono text-[10px] text-faint">⌘K</kbd>
             </button>
 
-            <form action={refreshCanvas}>
-              <button
-                type="submit"
-                title="Re-fetch all Canvas data now"
-                className="flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[12px] text-muted-foreground hover:border-line-strong hover:text-foreground"
-              >
-                <RefreshCw size={13} /> Refresh
-              </button>
-            </form>
+            <button
+              type="button"
+              onClick={refresh}
+              disabled={pending}
+              title="Re-fetch all Canvas data now"
+              className="flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[12px] text-muted-foreground hover:border-line-strong hover:text-foreground disabled:opacity-60"
+            >
+              <RefreshCw
+                size={13}
+                className={pending ? "animate-spin" : undefined}
+              />{" "}
+              Refresh
+            </button>
           </header>
 
           <div className="min-h-0 flex-1 overflow-auto">{children}</div>
         </main>
       </div>
-    </ToastProvider>
+    </>
   );
 }
 
